@@ -1,0 +1,2964 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
+<meta name="theme-color" content="#FAF3E7" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<title>NautilusClaw Kids — Voice Companion</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,300..900,0..100;1,9..144,300..900,0..100&family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+<script src="/auth.js"></script>
+<style>
+  /* =========================================================
+     NautilusClaw Kids — Mobile App (interactive demo)
+     Single-file. Shares brand language with the marketing site.
+     ========================================================= */
+
+  :root {
+    --abyss:        #07182B;
+    --ink:          #0D2440;
+    --ink-soft:     #1A2E48;
+
+    --shell:        #FAF3E7;
+    --cream:        #F5EBD9;
+    --paper:        #FFF8EC;
+
+    --coral:        #FF5E3A;
+    --coral-deep:   #D6391A;
+    --coral-soft:   #F4A89E;
+
+    --seafoam:      #7BCDB5;
+    --seafoam-deep: #2E8C75;
+
+    --sun:          #F4C95D;
+    --lilac:        #BFA3D6;
+
+    --serif:  "Fraunces", Georgia, serif;
+    --sans:   "Instrument Sans", ui-sans-serif, system-ui, sans-serif;
+
+    --radius:       18px;
+    --radius-lg:    24px;
+    --radius-pill:  999px;
+
+    --safe-top:    env(safe-area-inset-top, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { height: 100%; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    font-family: var(--sans);
+    color: var(--ink);
+    background: var(--shell);
+    font-size: 16px;
+    line-height: 1.45;
+    overflow: hidden;
+    overscroll-behavior: none;
+    touch-action: manipulation;
+  }
+  button, input { font-family: inherit; font-size: inherit; }
+  button { border: none; background: none; cursor: pointer; color: inherit; }
+  ::selection { background: var(--coral); color: var(--shell); }
+
+  /* === Page wrapper (full webpage, no phone frame) === */
+  .device-bg {
+    position: fixed; inset: 0;
+    background: var(--shell);
+    display: block;
+  }
+  .device {
+    width: 100vw;
+    height: 100vh;
+    background: var(--shell);
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* === Status bar (hidden in full-webpage mode) === */
+  .statusbar {
+    display: none;
+  }
+  .statusbar-ignored {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    padding: max(var(--safe-top), 14px) 28px 8px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 13px;
+    font-weight: 600;
+    z-index: 50;
+    color: var(--ink);
+    pointer-events: none;
+  }
+  .statusbar .dots {
+    display: flex; gap: 4px; align-items: center;
+  }
+  .statusbar .dots i {
+    width: 4px; height: 4px; border-radius: 50%;
+    background: var(--ink);
+  }
+  .statusbar .dots i:nth-child(1) { opacity: 1; }
+  .statusbar .dots i:nth-child(2) { opacity: 0.7; }
+  .statusbar .dots i:nth-child(3) { opacity: 0.4; }
+  .statusbar .battery {
+    display: inline-flex; align-items: center; gap: 4px;
+  }
+  .statusbar .batt-rect {
+    display: inline-block;
+    width: 22px; height: 11px;
+    border: 1px solid var(--ink);
+    border-radius: 3px;
+    position: relative;
+  }
+  .statusbar .batt-rect::after {
+    content: "";
+    position: absolute;
+    right: -3px; top: 3px;
+    width: 2px; height: 5px;
+    background: var(--ink);
+    border-radius: 0 1px 1px 0;
+  }
+  .statusbar .batt-fill {
+    position: absolute;
+    inset: 1px;
+    background: var(--ink);
+    border-radius: 1px;
+    width: 75%;
+  }
+
+  /* === App layout === */
+  .app {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    padding-top: var(--safe-top);
+    padding-bottom: calc(var(--safe-bottom));
+  }
+
+  /* === App header === */
+  .appbar {
+    padding: 4px 20px 12px;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-shrink: 0;
+  }
+  .greeting {
+    display: flex; align-items: center; gap: 12px;
+  }
+  .avatar {
+    width: 42px; height: 42px;
+    border-radius: 50%;
+    background: linear-gradient(140deg, var(--coral), var(--sun));
+    display: inline-flex; align-items: center; justify-content: center;
+    color: var(--shell);
+    font-family: var(--serif);
+    font-size: 19px;
+    font-weight: 500;
+    box-shadow: 0 4px 12px -2px rgba(255, 94, 58, 0.4);
+  }
+  .greeting .who {
+    line-height: 1.2;
+  }
+  .greeting .who small {
+    display: block;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: rgba(13, 36, 64, 0.5);
+    margin-bottom: 2px;
+  }
+  .greeting .who strong {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: 17px;
+    letter-spacing: -0.005em;
+  }
+
+  .header-right {
+    display: flex; align-items: center; gap: 8px;
+  }
+  .header-stat {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 8px 14px;
+    background: var(--paper);
+    border-radius: var(--radius-pill);
+    font-size: 13px;
+    font-weight: 500;
+    border: 1px solid rgba(13, 36, 64, 0.06);
+  }
+  .header-stat .ico { color: var(--coral); }
+
+  /* Discreet parent gate — small lock icon top-right */
+  .parent-gate-btn {
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    background: var(--paper);
+    border: 1px solid rgba(13, 36, 64, 0.06);
+    display: inline-flex; align-items: center; justify-content: center;
+    color: rgba(13, 36, 64, 0.4);
+    transition: color 200ms, background 200ms;
+  }
+  .parent-gate-btn:hover { color: var(--ink); background: var(--cream); }
+  .parent-gate-btn:active { transform: scale(0.94); }
+
+  /* === Settings (gear) button === */
+  .settings-btn {
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    background: var(--paper);
+    border: 1px solid rgba(13, 36, 64, 0.06);
+    display: inline-flex; align-items: center; justify-content: center;
+    color: rgba(13, 36, 64, 0.4);
+    transition: color 200ms, background 200ms, transform 120ms;
+    position: relative;
+  }
+  .settings-btn:hover { color: var(--ink); background: var(--cream); }
+  .settings-btn:active { transform: scale(0.94); }
+  .settings-btn.live {
+    color: var(--seafoam-deep);
+    background: rgba(123, 205, 181, 0.18);
+  }
+  .settings-btn.live::after {
+    content: "";
+    position: absolute;
+    top: 4px; right: 4px;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--seafoam);
+    border: 2px solid var(--paper);
+  }
+
+  /* === Demo banner === */
+  .demo-banner {
+    margin: 4px 18px 8px;
+    padding: 10px 14px;
+    background: rgba(244, 201, 93, 0.18);
+    border: 1px solid rgba(244, 201, 93, 0.6);
+    border-radius: 12px;
+    font-size: 12.5px;
+    color: rgba(13, 36, 64, 0.85);
+    display: flex; gap: 10px; align-items: center;
+    flex-shrink: 0;
+  }
+  .demo-banner.hidden { display: none; }
+  .demo-banner strong { font-weight: 600; }
+  .demo-banner button {
+    margin-left: auto;
+    background: var(--ink);
+    color: var(--shell);
+    font-size: 11px;
+    padding: 6px 12px;
+    border-radius: 99px;
+    font-weight: 500;
+    white-space: nowrap;
+    transition: background 200ms;
+  }
+  .demo-banner button:hover { background: var(--coral); }
+
+  /* === Modal === */
+  .modal-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(7, 24, 43, 0.6);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 300;
+    opacity: 0; pointer-events: none;
+    transition: opacity 240ms;
+    padding: 16px;
+    padding-top: max(var(--safe-top), 24px);
+  }
+  .modal-backdrop.open { opacity: 1; pointer-events: auto; }
+  .modal {
+    background: var(--paper);
+    border-radius: var(--radius-lg);
+    max-width: 380px;
+    width: 100%;
+    box-shadow: 0 30px 80px -20px rgba(0,0,0,0.5);
+    max-height: 90vh;
+    overflow-y: auto;
+    transform: translateY(20px);
+    transition: transform 320ms cubic-bezier(.2,.7,.2,1);
+  }
+  .modal-backdrop.open .modal { transform: translateY(0); }
+  .modal-head {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 20px 22px 8px;
+  }
+  .modal-head h3 {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: 22px;
+    margin: 0;
+    letter-spacing: -0.01em;
+  }
+  .modal-close {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: var(--cream);
+    font-size: 18px;
+    color: var(--ink);
+    line-height: 1;
+  }
+  .modal-body {
+    padding: 6px 22px 14px;
+  }
+  .modal-body p {
+    font-size: 13.5px;
+    color: rgba(13, 36, 64, 0.78);
+    margin: 0 0 10px;
+    line-height: 1.5;
+  }
+  .modal-body p.muted {
+    font-size: 12px;
+    color: rgba(13, 36, 64, 0.55);
+    margin-bottom: 16px;
+  }
+  .modal-body p a { color: var(--coral); border-bottom: 1px solid var(--coral); }
+  .input-label {
+    display: block;
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: rgba(13, 36, 64, 0.6);
+    margin: 14px 0 6px;
+    font-weight: 600;
+  }
+  .text-input {
+    width: 100%;
+    padding: 11px 13px;
+    border-radius: 10px;
+    border: 1.5px solid rgba(13, 36, 64, 0.12);
+    background: var(--shell);
+    font-family: var(--mono);
+    font-size: 12.5px;
+    color: var(--ink);
+    outline: none;
+    transition: border-color 200ms;
+  }
+  .text-input:focus { border-color: var(--coral); }
+  select.text-input {
+    font-family: var(--sans);
+    font-size: 13.5px;
+    appearance: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path fill='%230D2440' d='M5 6L0 0h10z'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    padding-right: 32px;
+  }
+  .api-status {
+    font-size: 12px;
+    margin-top: 8px;
+    min-height: 16px;
+    line-height: 1.4;
+  }
+  .api-status.ok  { color: var(--seafoam-deep); }
+  .api-status.err { color: var(--coral-deep); }
+  .api-status.pending { color: rgba(13, 36, 64, 0.6); }
+  .modal-foot {
+    display: flex; gap: 8px; flex-wrap: wrap;
+    padding: 14px 22px 20px;
+    border-top: 1px solid rgba(13, 36, 64, 0.06);
+  }
+  .btn-ghost, .btn-modal-primary, .btn-modal-danger {
+    padding: 10px 16px;
+    border-radius: var(--radius-pill);
+    font-size: 13px;
+    font-weight: 500;
+    transition: background 200ms, color 200ms;
+  }
+  .btn-ghost {
+    background: var(--cream);
+    color: var(--ink);
+    flex: 1;
+  }
+  .btn-ghost:hover { background: var(--cream-2, #ECDFC8); }
+  .btn-modal-primary {
+    background: var(--coral);
+    color: var(--shell);
+    flex: 1;
+  }
+  .btn-modal-primary:hover { background: var(--coral-deep); }
+  .btn-modal-danger {
+    background: transparent;
+    color: var(--coral-deep);
+    border: 1px solid var(--coral-deep);
+  }
+  .btn-modal-danger:hover { background: var(--coral-deep); color: var(--shell); }
+
+  /* === Crisis overlay === */
+  .crisis-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(160deg, #1a4870, #0d2440 70%);
+    color: var(--shell);
+    z-index: 250;
+    display: flex; align-items: center; justify-content: center;
+    padding: 24px;
+    padding-top: max(var(--safe-top), 24px);
+    opacity: 0; pointer-events: none;
+    transition: opacity 380ms;
+  }
+  .crisis-overlay.open { opacity: 1; pointer-events: auto; }
+  .crisis-content {
+    text-align: center;
+    max-width: 360px;
+  }
+  .crisis-heart {
+    width: 72px; height: 72px;
+    border-radius: 50%;
+    background: rgba(250, 243, 231, 0.12);
+    display: inline-flex; align-items: center; justify-content: center;
+    margin-bottom: 20px;
+    font-size: 36px;
+    animation: heartPulse 2.6s ease-in-out infinite;
+  }
+  @keyframes heartPulse {
+    0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(250,243,231,0.10); }
+    50%      { transform: scale(1.06); box-shadow: 0 0 0 16px rgba(250,243,231,0); }
+  }
+  .crisis-content h2 {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: 34px;
+    letter-spacing: -0.015em;
+    margin: 0 0 14px;
+    color: var(--shell);
+  }
+  .crisis-content > p {
+    font-size: 15px;
+    line-height: 1.55;
+    color: rgba(250, 243, 231, 0.85);
+    margin: 0 0 26px;
+  }
+  .crisis-helpline {
+    text-align: left;
+    background: rgba(250, 243, 231, 0.08);
+    border: 1px solid rgba(250, 243, 231, 0.12);
+    border-radius: 14px;
+    padding: 16px 20px;
+    font-size: 13px;
+  }
+  .crisis-helpline strong.title {
+    display: block;
+    margin-bottom: 10px;
+    color: var(--shell);
+    font-weight: 600;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+  }
+  .crisis-helpline ul {
+    list-style: none; padding: 0; margin: 0;
+  }
+  .crisis-helpline li {
+    margin: 5px 0;
+    color: rgba(250, 243, 231, 0.92);
+    display: flex; gap: 8px;
+  }
+  .crisis-helpline li strong {
+    min-width: 80px;
+    color: var(--coral-soft);
+    font-weight: 500;
+  }
+  .crisis-close {
+    margin-top: 24px;
+    background: var(--shell);
+    color: var(--ink);
+    padding: 14px 28px;
+    border-radius: var(--radius-pill);
+    font-weight: 500;
+    font-size: 14px;
+    transition: transform 120ms;
+  }
+  .crisis-close:active { transform: scale(0.97); }
+
+  /* === Tab content area === */
+  .pages {
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+  }
+  .page {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    transform: translateX(0);
+    transition: transform 320ms cubic-bezier(.4, .0, .2, 1), opacity 280ms;
+    overflow: hidden;
+    visibility: hidden;
+    opacity: 0;
+  }
+  .page.active {
+    visibility: visible;
+    opacity: 1;
+  }
+
+  /* === Tab bar === */
+  .tabbar {
+    flex-shrink: 0;
+    background: var(--paper);
+    border-top: 1px solid rgba(13, 36, 64, 0.08);
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    padding: 8px 8px calc(var(--safe-bottom) + 8px);
+  }
+  .tab {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 8px 4px;
+    border-radius: 14px;
+    color: rgba(13, 36, 64, 0.5);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    transition: color 200ms, background 200ms;
+    gap: 4px;
+  }
+  .tab svg {
+    width: 22px; height: 22px;
+    transition: transform 240ms cubic-bezier(.4,.4,.2,1.4);
+  }
+  .tab.on {
+    color: var(--coral);
+    background: rgba(255, 94, 58, 0.08);
+  }
+  .tab.on svg { transform: translateY(-2px) scale(1.1); }
+  .tab:hover:not(.on) { color: var(--ink); }
+
+  /* ==================== CHAT PAGE ==================== */
+  .chat-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 8px 18px 16px;
+    display: flex; flex-direction: column; gap: 12px;
+    scroll-behavior: smooth;
+  }
+  .chat-list::-webkit-scrollbar { width: 0; }
+
+  .chat-day {
+    align-self: center;
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 13px;
+    color: rgba(13, 36, 64, 0.45);
+    padding: 4px 12px;
+    margin: 8px 0 4px;
+  }
+
+  .msg {
+    max-width: 86%;
+    padding: 12px 16px;
+    border-radius: 22px;
+    font-size: 15.5px;
+    line-height: 1.45;
+    animation: msgIn 360ms cubic-bezier(.2, .7, .2, 1);
+    box-shadow: 0 1px 2px rgba(13, 36, 64, 0.04);
+    word-wrap: break-word;
+  }
+  @keyframes msgIn {
+    from { opacity: 0; transform: translateY(8px) scale(0.97); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  .msg.kid {
+    align-self: flex-end;
+    background: var(--ink);
+    color: var(--shell);
+    border-bottom-right-radius: 6px;
+  }
+  .msg.naut {
+    align-self: flex-start;
+    background: var(--paper);
+    color: var(--ink);
+    border-bottom-left-radius: 6px;
+    border: 1px solid rgba(13, 36, 64, 0.05);
+  }
+  .msg .emo {
+    display: inline-block;
+    background: rgba(123, 205, 181, 0.22);
+    color: var(--seafoam-deep);
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 2px 8px;
+    border-radius: 99px;
+    margin-bottom: 6px;
+    font-weight: 600;
+  }
+  .msg .emo.curious   { background: rgba(244, 201, 93, 0.25); color: #8a6918; }
+  .msg .emo.playful   { background: rgba(244, 168, 158, 0.30); color: #b53a25; }
+  .msg .emo.excited   { background: rgba(255, 94, 58, 0.18); color: #b53a25; }
+
+  .typing {
+    align-self: flex-start;
+    padding: 14px 18px;
+    background: var(--paper);
+    border: 1px solid rgba(13, 36, 64, 0.05);
+    border-radius: 22px 22px 22px 6px;
+    display: inline-flex; gap: 4px;
+  }
+  .typing i {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--coral);
+    opacity: 0.4;
+    animation: typingPulse 1.2s ease-in-out infinite;
+  }
+  .typing i:nth-child(2) { animation-delay: 0.15s; }
+  .typing i:nth-child(3) { animation-delay: 0.30s; }
+  @keyframes typingPulse {
+    0%, 100% { opacity: 0.3; transform: translateY(0); }
+    40%      { opacity: 1; transform: translateY(-4px); }
+  }
+
+  /* === Suggestion chips === */
+  .chips {
+    flex-shrink: 0;
+    display: flex; gap: 8px;
+    padding: 0 18px 8px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .chips::-webkit-scrollbar { display: none; }
+  .chip {
+    flex-shrink: 0;
+    padding: 9px 16px;
+    background: var(--paper);
+    border: 1px solid rgba(13, 36, 64, 0.08);
+    border-radius: var(--radius-pill);
+    font-size: 13.5px;
+    color: var(--ink);
+    transition: background 180ms, transform 120ms;
+    white-space: nowrap;
+  }
+  .chip:hover { background: var(--cream); }
+  .chip:active { transform: scale(0.96); }
+
+  /* === Composer === */
+  .composer {
+    flex-shrink: 0;
+    padding: 10px 14px 14px;
+    background: var(--paper);
+    border-top: 1px solid rgba(13, 36, 64, 0.06);
+    display: flex; align-items: center; gap: 10px;
+  }
+  .composer .input {
+    flex: 1;
+    height: 46px;
+    border-radius: var(--radius-pill);
+    background: var(--cream);
+    padding: 0 18px;
+    border: 1px solid transparent;
+    color: var(--ink);
+    outline: none;
+    transition: border-color 200ms, background 200ms;
+  }
+  .composer .input::placeholder { color: rgba(13, 36, 64, 0.42); }
+  .composer .input:focus {
+    background: var(--shell);
+    border-color: rgba(13, 36, 64, 0.18);
+  }
+  .micbtn {
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    background: var(--coral);
+    color: var(--shell);
+    display: inline-flex; align-items: center; justify-content: center;
+    box-shadow: 0 6px 18px -3px rgba(255, 94, 58, 0.55);
+    flex-shrink: 0;
+    transition: background 200ms, transform 120ms;
+    position: relative;
+  }
+  .micbtn:active { transform: scale(0.95); }
+  .micbtn.recording { background: var(--coral-deep); }
+  .micbtn.recording::after {
+    content: "";
+    position: absolute;
+    inset: -8px;
+    border-radius: 50%;
+    border: 2px solid var(--coral);
+    animation: micRing 1.2s ease-out infinite;
+  }
+  @keyframes micRing {
+    0%   { transform: scale(0.85); opacity: 0.9; }
+    100% { transform: scale(1.5);  opacity: 0; }
+  }
+
+  /* ==================== STORIES PAGE ==================== */
+  .stories-wrap {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0 18px 24px;
+  }
+  .stories-wrap::-webkit-scrollbar { width: 0; }
+  .stories-head {
+    padding: 4px 0 16px;
+  }
+  .stories-head h2 {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: 32px;
+    letter-spacing: -0.02em;
+    margin: 0 0 4px;
+  }
+  .stories-head p {
+    margin: 0;
+    color: rgba(13, 36, 64, 0.6);
+    font-size: 14px;
+  }
+
+  .new-story {
+    background: linear-gradient(140deg, var(--coral), var(--coral-deep));
+    border-radius: var(--radius-lg);
+    padding: 20px 22px;
+    color: var(--shell);
+    margin-bottom: 18px;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 200ms;
+  }
+  .new-story:active { transform: scale(0.98); }
+  .new-story::before {
+    content: "";
+    position: absolute;
+    right: -40px; top: -40px;
+    width: 160px; height: 160px;
+    border: 2px solid rgba(250,243,231,0.16);
+    border-radius: 50%;
+  }
+  .new-story::after {
+    content: "";
+    position: absolute;
+    right: -20px; top: -20px;
+    width: 120px; height: 120px;
+    border: 2px solid rgba(250,243,231,0.12);
+    border-radius: 50%;
+  }
+  .new-story h3 {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: 22px;
+    margin: 0 0 6px;
+    position: relative;
+    z-index: 2;
+  }
+  .new-story p {
+    margin: 0;
+    font-size: 13.5px;
+    opacity: 0.88;
+    max-width: 220px;
+    position: relative;
+    z-index: 2;
+  }
+  .new-story .arrow {
+    position: absolute;
+    bottom: 20px; right: 22px;
+    width: 36px; height: 36px;
+    background: var(--shell);
+    color: var(--coral);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    z-index: 2;
+  }
+
+  .section-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: rgba(13, 36, 64, 0.55);
+    margin: 14px 0 12px;
+    font-weight: 500;
+  }
+
+  .story-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .story-tile {
+    aspect-ratio: 4 / 5;
+    border-radius: var(--radius);
+    padding: 16px;
+    color: var(--shell);
+    display: flex; flex-direction: column; justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 200ms;
+  }
+  .story-tile:active { transform: scale(0.97); }
+  .story-tile.s1 { background: linear-gradient(160deg, #FF8E68, #D6391A); }
+  .story-tile.s2 { background: linear-gradient(160deg, #7BCDB5, #2E8C75); }
+  .story-tile.s3 { background: linear-gradient(160deg, #F4C95D, #C8821F); }
+  .story-tile.s4 { background: linear-gradient(160deg, #BFA3D6, #6F4FA0); }
+  .story-tile.s5 { background: linear-gradient(160deg, #F4A89E, #B53A25); }
+  .story-tile.s6 { background: linear-gradient(160deg, #93B9D6, #2C5777); }
+  .story-tile .glyph {
+    font-size: 32px;
+    line-height: 1;
+  }
+  .story-tile .ttl {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: 17px;
+    line-height: 1.15;
+    letter-spacing: -0.005em;
+  }
+  .story-tile .meta {
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-top: 4px;
+    opacity: 0.85;
+  }
+  .story-tile .progress {
+    height: 4px;
+    background: rgba(250,243,231,0.25);
+    border-radius: 99px;
+    margin-top: 8px;
+    overflow: hidden;
+  }
+  .story-tile .progress span {
+    display: block;
+    height: 100%;
+    background: var(--shell);
+    border-radius: 99px;
+  }
+
+  /* ==================== PUZZLES PAGE ==================== */
+  .puzzles-wrap {
+    flex: 1;
+    overflow-y: auto;
+    padding: 4px 18px 24px;
+  }
+  .puzzles-wrap::-webkit-scrollbar { width: 0; }
+
+  .puzzle-card {
+    background: var(--paper);
+    border: 1px solid rgba(13, 36, 64, 0.07);
+    border-radius: var(--radius-lg);
+    padding: 18px;
+    margin-bottom: 14px;
+    display: flex; gap: 16px;
+    align-items: center;
+    cursor: pointer;
+    transition: transform 200ms, box-shadow 200ms;
+  }
+  .puzzle-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px -4px rgba(13, 36, 64, 0.12);
+  }
+  .puzzle-card:active { transform: scale(0.98); }
+  .puzzle-art {
+    width: 76px; height: 76px;
+    border-radius: 18px;
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 32px;
+  }
+  .puzzle-card.p1 .puzzle-art { background: linear-gradient(140deg, #F4A89E, #FF5E3A); }
+  .puzzle-card.p2 .puzzle-art { background: linear-gradient(140deg, #7BCDB5, #2E8C75); }
+  .puzzle-card.p3 .puzzle-art { background: linear-gradient(140deg, #F4C95D, #C8821F); }
+  .puzzle-card.p4 .puzzle-art { background: linear-gradient(140deg, #BFA3D6, #6F4FA0); }
+
+  .puzzle-meta { flex: 1; min-width: 0; }
+  .puzzle-meta h4 {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: 18px;
+    margin: 0 0 4px;
+    letter-spacing: -0.005em;
+  }
+  .puzzle-meta p {
+    margin: 0;
+    font-size: 12.5px;
+    color: rgba(13, 36, 64, 0.6);
+  }
+  .puzzle-meta .pmeta-row {
+    display: flex; gap: 12px;
+    margin-top: 8px;
+    font-size: 11px;
+    color: rgba(13, 36, 64, 0.55);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .puzzle-meta .pmeta-row span {
+    display: inline-flex; align-items: center; gap: 4px;
+  }
+  .puzzle-meta .pmeta-row .stars {
+    color: var(--coral);
+  }
+
+  /* === Memory match game (active state) === */
+  .game-overlay {
+    position: absolute;
+    inset: 0;
+    background: var(--shell);
+    z-index: 60;
+    transform: translateY(100%);
+    transition: transform 360ms cubic-bezier(.2, .7, .2, 1);
+    display: flex; flex-direction: column;
+    padding-top: calc(var(--safe-top) + 14px);
+  }
+  .game-overlay.open { transform: translateY(0); }
+  .game-overlay-head {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 18px 14px;
+  }
+  .game-overlay-head h3 {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: 22px;
+    margin: 0;
+  }
+  .close-btn {
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    background: var(--paper);
+    border: 1px solid rgba(13, 36, 64, 0.08);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    color: var(--ink);
+  }
+  .game-board {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    padding: 8px 18px 24px;
+  }
+  .card {
+    aspect-ratio: 1;
+    border-radius: 18px;
+    perspective: 800px;
+    cursor: pointer;
+  }
+  .card-inner {
+    position: relative;
+    width: 100%; height: 100%;
+    transform-style: preserve-3d;
+    transition: transform 480ms cubic-bezier(.4,.2,.2,1);
+  }
+  .card.flipped .card-inner,
+  .card.matched .card-inner {
+    transform: rotateY(180deg);
+  }
+  .card-face {
+    position: absolute; inset: 0;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    border-radius: 18px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 36px;
+  }
+  .card-front {
+    background: linear-gradient(140deg, var(--ink), var(--ink-soft));
+    color: rgba(250, 243, 231, 0.4);
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 22px;
+  }
+  .card-back {
+    background: var(--paper);
+    border: 2px solid var(--coral);
+    transform: rotateY(180deg);
+  }
+  .card.matched .card-back {
+    background: rgba(123, 205, 181, 0.25);
+    border-color: var(--seafoam-deep);
+  }
+  .game-status {
+    text-align: center;
+    padding: 10px;
+    font-family: var(--serif);
+    font-size: 16px;
+    color: var(--ink);
+  }
+
+  /* ==================== GROWTH PAGE ==================== */
+  .growth-wrap {
+    flex: 1;
+    overflow-y: auto;
+    padding: 4px 18px 24px;
+  }
+  .growth-wrap::-webkit-scrollbar { width: 0; }
+
+  .level-ring-card {
+    background: linear-gradient(140deg, var(--ink), var(--ink-soft));
+    border-radius: var(--radius-lg);
+    padding: 28px 22px;
+    color: var(--shell);
+    display: flex; align-items: center; gap: 22px;
+    margin-bottom: 16px;
+    position: relative;
+    overflow: hidden;
+  }
+  .level-ring-card::before {
+    content: "";
+    position: absolute;
+    right: -80px; top: -60px;
+    width: 240px; height: 240px;
+    background: radial-gradient(circle, rgba(255,94,58,0.25), transparent 60%);
+    pointer-events: none;
+  }
+
+  .level-ring {
+    width: 110px; height: 110px;
+    flex-shrink: 0;
+    position: relative;
+  }
+  .level-ring svg {
+    width: 100%; height: 100%;
+    transform: rotate(-90deg);
+  }
+  .level-ring .lvl-bg {
+    stroke: rgba(250, 243, 231, 0.15);
+    fill: none;
+    stroke-width: 6;
+  }
+  .level-ring .lvl-fg {
+    stroke: var(--coral);
+    fill: none;
+    stroke-width: 6;
+    stroke-linecap: round;
+    transition: stroke-dasharray 800ms cubic-bezier(.2, .7, .2, 1);
+  }
+  .level-ring .lvl-text {
+    position: absolute;
+    inset: 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center;
+  }
+  .level-ring .lvl-text strong {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: 30px;
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  .level-ring .lvl-text small {
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    margin-top: 4px;
+    color: rgba(250, 243, 231, 0.7);
+  }
+
+  .level-info { flex: 1; min-width: 0; position: relative; z-index: 2; }
+  .level-info .level-name {
+    font-family: var(--serif);
+    font-size: 24px;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+    margin: 0 0 4px;
+  }
+  .level-info .level-sub {
+    font-size: 13px;
+    color: rgba(250, 243, 231, 0.7);
+    margin: 0 0 14px;
+  }
+  .level-info .next {
+    font-size: 11.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--coral-soft);
+  }
+
+  .stat-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+  .stat-tile {
+    background: var(--paper);
+    border: 1px solid rgba(13, 36, 64, 0.07);
+    border-radius: var(--radius);
+    padding: 14px 14px 12px;
+  }
+  .stat-tile .v {
+    font-family: var(--serif);
+    font-size: 24px;
+    font-weight: 500;
+    line-height: 1;
+    letter-spacing: -0.015em;
+  }
+  .stat-tile .l {
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: rgba(13, 36, 64, 0.55);
+    margin-top: 6px;
+  }
+
+  .challenge {
+    background: var(--paper);
+    border: 1px solid rgba(13, 36, 64, 0.07);
+    border-radius: var(--radius);
+    padding: 16px 18px;
+    margin-bottom: 10px;
+    display: flex; align-items: center; gap: 14px;
+  }
+  .challenge .check {
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    border: 2px solid rgba(13, 36, 64, 0.2);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    transition: background 200ms, border-color 200ms;
+  }
+  .challenge.done .check {
+    background: var(--seafoam);
+    border-color: var(--seafoam-deep);
+    color: var(--shell);
+  }
+  .challenge .text { flex: 1; min-width: 0; }
+  .challenge .text strong {
+    display: block;
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: 15px;
+    margin-bottom: 2px;
+    letter-spacing: -0.005em;
+  }
+  .challenge.done .text strong { text-decoration: line-through; opacity: 0.6; }
+  .challenge .text small {
+    font-size: 12px;
+    color: rgba(13, 36, 64, 0.6);
+  }
+  .challenge .reward {
+    color: var(--coral);
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    flex-shrink: 0;
+  }
+
+  .badges-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-top: 8px;
+  }
+  .badge-card {
+    aspect-ratio: 1;
+    border-radius: 18px;
+    background: var(--paper);
+    border: 1px solid rgba(13, 36, 64, 0.07);
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column;
+    font-size: 28px;
+    color: var(--ink);
+    transition: transform 200ms;
+  }
+  .badge-card:active { transform: scale(0.95); }
+  .badge-card.locked { opacity: 0.3; filter: grayscale(1); }
+  .badge-card small {
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: rgba(13, 36, 64, 0.6);
+    margin-top: 4px;
+  }
+
+  /* ==================== ONBOARDING ==================== */
+  .onboard {
+    position: absolute;
+    inset: 0;
+    z-index: 100;
+    background:
+      radial-gradient(700px 500px at 30% 20%, rgba(244,168,158,0.50), transparent 65%),
+      radial-gradient(600px 600px at 80% 90%, rgba(123,205,181,0.40), transparent 70%),
+      var(--shell);
+    display: flex; flex-direction: column;
+    padding: calc(var(--safe-top) + 56px) 28px calc(var(--safe-bottom) + 28px);
+    transition: opacity 480ms ease, transform 480ms cubic-bezier(.2,.7,.2,1);
+  }
+  .onboard.hidden {
+    opacity: 0;
+    transform: translateY(-20px);
+    pointer-events: none;
+  }
+  .onboard h1 {
+    font-family: var(--serif);
+    font-weight: 380;
+    font-variation-settings: "opsz" 144, "SOFT" 80;
+    font-size: 44px;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    margin: 0 0 14px;
+    color: var(--ink);
+  }
+  .onboard h1 em {
+    font-style: italic;
+    font-weight: 300;
+    color: var(--coral);
+  }
+  .onboard p.intro {
+    font-size: 15.5px;
+    color: rgba(13, 36, 64, 0.7);
+    margin: 0 0 36px;
+    max-width: 320px;
+  }
+
+  .onboard .step-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--coral);
+    font-weight: 600;
+    margin-bottom: 14px;
+  }
+
+  .onboard .name-input {
+    width: 100%;
+    padding: 16px 20px;
+    border-radius: var(--radius);
+    background: var(--paper);
+    border: 1.5px solid rgba(13, 36, 64, 0.1);
+    color: var(--ink);
+    font-size: 17px;
+    font-family: var(--serif);
+    font-weight: 400;
+    margin-bottom: 16px;
+    outline: none;
+    transition: border-color 200ms;
+  }
+  .onboard .name-input:focus { border-color: var(--coral); }
+
+  .age-options {
+    display: grid;
+    gap: 10px;
+    margin-bottom: 24px;
+  }
+  .age-option {
+    width: 100%;
+    text-align: left;
+    padding: 16px 18px;
+    background: var(--paper);
+    border: 1.5px solid rgba(13, 36, 64, 0.1);
+    border-radius: var(--radius);
+    cursor: pointer;
+    display: flex; align-items: center; gap: 16px;
+    transition: border-color 200ms, transform 120ms;
+  }
+  .age-option:active { transform: scale(0.98); }
+  .age-option.selected {
+    border-color: var(--coral);
+    background: var(--paper);
+    box-shadow: 0 0 0 4px rgba(255, 94, 58, 0.10);
+  }
+  .age-option .age-glyph {
+    width: 48px; height: 48px;
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px;
+    flex-shrink: 0;
+  }
+  .age-option:nth-child(1) .age-glyph { background: linear-gradient(140deg, #F4A89E, #FF5E3A); }
+  .age-option:nth-child(2) .age-glyph { background: linear-gradient(140deg, #7BCDB5, #2E8C75); }
+  .age-option:nth-child(3) .age-glyph { background: linear-gradient(140deg, #F4C95D, #C8821F); }
+  .age-option .age-meta strong {
+    display: block;
+    font-family: var(--serif);
+    font-size: 17px;
+    font-weight: 500;
+    letter-spacing: -0.005em;
+  }
+  .age-option .age-meta small {
+    font-size: 12.5px;
+    color: rgba(13, 36, 64, 0.6);
+  }
+
+  .start-btn {
+    margin-top: auto;
+    background: var(--coral);
+    color: var(--shell);
+    padding: 18px;
+    border-radius: var(--radius-pill);
+    font-weight: 500;
+    font-size: 16px;
+    box-shadow: 0 8px 24px -4px rgba(255, 94, 58, 0.5);
+    transition: background 200ms, transform 120ms;
+    width: 100%;
+  }
+  .start-btn:active { transform: scale(0.98); }
+  .start-btn:disabled {
+    background: rgba(13, 36, 64, 0.15);
+    color: rgba(13, 36, 64, 0.35);
+    box-shadow: none;
+  }
+  .legal-line {
+    text-align: center;
+    margin-top: 14px;
+    font-size: 11px;
+    color: rgba(13, 36, 64, 0.5);
+    letter-spacing: 0.02em;
+  }
+
+  /* ==================== TOAST / FLOATING ==================== */
+  .toast {
+    position: absolute;
+    top: calc(var(--safe-top) + 60px);
+    left: 50%;
+    transform: translateX(-50%) translateY(-30px);
+    background: var(--ink);
+    color: var(--shell);
+    padding: 12px 20px;
+    border-radius: var(--radius-pill);
+    font-size: 14px;
+    z-index: 80;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 200ms, transform 280ms cubic-bezier(.2,.7,.2,1);
+    box-shadow: 0 10px 30px -8px rgba(0,0,0,0.4);
+    display: inline-flex; align-items: center; gap: 10px;
+  }
+  .toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+  .toast .xp {
+    color: var(--sun);
+    font-weight: 700;
+  }
+
+  /* === Auth gate (shown to unauthenticated visitors) === */
+  .auth-gate {
+    position: absolute;
+    inset: 0;
+    z-index: 400;
+    background:
+      radial-gradient(900px 700px at 75% 20%, rgba(244, 168, 158, 0.55), transparent 65%),
+      radial-gradient(800px 800px at 5% 95%, rgba(123, 205, 181, 0.45), transparent 70%),
+      var(--shell);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 32px 28px;
+    text-align: center;
+    transition: opacity 360ms ease, transform 360ms cubic-bezier(.2,.7,.2,1);
+  }
+  .auth-gate.hidden {
+    opacity: 0;
+    transform: translateY(-12px);
+    pointer-events: none;
+  }
+  .auth-gate .brand-mark {
+    width: 76px; height: 76px;
+    margin-bottom: 24px;
+    color: var(--coral);
+    animation: gateBreathe 5.5s ease-in-out infinite;
+  }
+  @keyframes gateBreathe {
+    0%, 100% { transform: rotate(-3deg) scale(1); }
+    50%      { transform: rotate(3deg) scale(1.05); }
+  }
+  .auth-gate .gate-eyebrow {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--coral);
+    font-weight: 600;
+    margin-bottom: 14px;
+  }
+  .auth-gate h1 {
+    font-family: var(--serif);
+    font-weight: 380;
+    font-variation-settings: "opsz" 144, "SOFT" 80;
+    font-size: clamp(40px, 8vw, 56px);
+    line-height: 0.95;
+    letter-spacing: -0.025em;
+    margin: 0 0 14px;
+    color: var(--ink);
+    max-width: 520px;
+  }
+  .auth-gate h1 em {
+    font-style: italic;
+    font-weight: 300;
+    color: var(--coral);
+  }
+  .auth-gate p.gate-sub {
+    font-size: 15.5px;
+    color: rgba(13, 36, 64, 0.7);
+    margin: 0 0 32px;
+    max-width: 420px;
+    line-height: 1.5;
+  }
+  .auth-gate .gate-cta-row {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .auth-gate .gate-btn {
+    padding: 14px 26px;
+    border-radius: var(--radius-pill);
+    font-weight: 500;
+    font-size: 15px;
+    transition: background 200ms, transform 120ms;
+    border: 1.5px solid transparent;
+  }
+  .auth-gate .gate-btn:active { transform: scale(0.97); }
+  .auth-gate .gate-btn.primary {
+    background: var(--coral);
+    color: var(--shell);
+    box-shadow: 0 6px 20px -4px rgba(255, 94, 58, 0.45);
+  }
+  .auth-gate .gate-btn.primary:hover { background: var(--coral-deep); }
+  .auth-gate .gate-btn.secondary {
+    background: transparent;
+    color: var(--ink);
+    border-color: rgba(13, 36, 64, 0.18);
+  }
+  .auth-gate .gate-btn.secondary:hover {
+    border-color: var(--ink);
+    background: rgba(13, 36, 64, 0.04);
+  }
+  .auth-gate .gate-foot {
+    margin-top: 36px;
+    padding-top: 22px;
+    border-top: 1px solid rgba(13, 36, 64, 0.10);
+    display: flex;
+    gap: 22px;
+    flex-wrap: wrap;
+    justify-content: center;
+    font-size: 12.5px;
+    color: rgba(13, 36, 64, 0.55);
+    max-width: 460px;
+  }
+  .auth-gate .gate-foot span {
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .auth-gate .gate-foot span::before {
+    content: "✓";
+    color: var(--seafoam-deep);
+    font-weight: 700;
+  }
+  .auth-gate .marketing-link {
+    margin-top: 18px;
+    font-size: 13px;
+  }
+  .auth-gate .marketing-link a {
+    color: var(--ink);
+    border-bottom: 1px solid rgba(13, 36, 64, 0.3);
+    transition: border-color 200ms;
+  }
+  .auth-gate .marketing-link a:hover { border-color: var(--ink); }
+
+  /* User menu inside header (replaces / augments the lock icon) */
+  .header-right .nc-auth-userpill {
+    padding: 6px 14px 6px 6px;
+  }
+
+  /* === Reduce motion === */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.001ms !important;
+      transition-duration: 0.001ms !important;
+    }
+  }
+
+  /* ============================================================
+     DESKTOP LAYOUT — sidebar + content
+     ============================================================ */
+  @media (min-width: 900px) {
+    body { background: var(--shell); }
+
+    .device-bg {
+      background:
+        radial-gradient(900px 700px at 80% 10%, rgba(244,168,158,0.18), transparent 60%),
+        radial-gradient(700px 800px at 5% 100%, rgba(123,205,181,0.12), transparent 70%),
+        var(--shell);
+    }
+    .device {
+      max-width: 1440px;
+      margin: 0 auto;
+      box-shadow: none;
+    }
+
+    .app {
+      display: grid;
+      grid-template-areas:
+        "appbar pages"
+        "tabbar pages";
+      grid-template-columns: 280px 1fr;
+      grid-template-rows: auto 1fr;
+      padding-top: 0;
+    }
+
+    /* Sidebar header */
+    .appbar {
+      grid-area: appbar;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 18px;
+      padding: 32px 22px 16px;
+      background: var(--paper);
+      border-right: 1px solid rgba(13, 36, 64, 0.08);
+      border-bottom: 1px solid rgba(13, 36, 64, 0.06);
+    }
+    .appbar .greeting { width: 100%; }
+    .appbar .greeting .who small { font-size: 10px; }
+    .appbar .greeting .who strong { font-size: 19px; }
+    .appbar .avatar {
+      width: 48px; height: 48px;
+      font-size: 21px;
+    }
+    .appbar .header-right {
+      width: 100%;
+      justify-content: flex-start;
+      gap: 8px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(13, 36, 64, 0.06);
+    }
+    .appbar .header-stat {
+      flex: 1;
+      justify-content: center;
+    }
+
+    /* Sidebar nav (former bottom tabbar) */
+    .tabbar {
+      grid-area: tabbar;
+      grid-template-columns: 1fr;
+      background: var(--paper);
+      border-right: 1px solid rgba(13, 36, 64, 0.08);
+      border-top: none;
+      padding: 12px 12px 32px;
+      gap: 4px;
+      align-content: start;
+    }
+    .tabbar::after {
+      content: "Nautilus is real when you connect Claude → ⚙";
+      grid-column: 1;
+      align-self: end;
+      padding: 16px 12px 0;
+      font-family: var(--serif);
+      font-style: italic;
+      font-weight: 300;
+      font-size: 12px;
+      color: rgba(13, 36, 64, 0.45);
+      line-height: 1.4;
+      border-top: 1px solid rgba(13, 36, 64, 0.06);
+      margin-top: 8px;
+    }
+    .tab {
+      flex-direction: row;
+      justify-content: flex-start;
+      gap: 14px;
+      padding: 12px 16px;
+      font-size: 14.5px;
+      border-radius: 12px;
+    }
+    .tab svg { width: 20px; height: 20px; }
+    .tab.on {
+      background: rgba(255, 94, 58, 0.10);
+      color: var(--coral);
+    }
+
+    /* Main content column */
+    .pages { grid-area: pages; }
+
+    /* Cap content widths so chat etc. doesn't span 1400px */
+    .chat-list {
+      max-width: 760px;
+      margin: 0 auto;
+      width: 100%;
+      padding: 24px 32px 16px;
+    }
+    .demo-banner {
+      max-width: 800px;
+      margin: 16px auto 8px;
+    }
+    .chips {
+      max-width: 800px;
+      margin: 0 auto;
+      width: 100%;
+      padding: 0 32px 12px;
+    }
+    .composer {
+      max-width: 800px;
+      margin: 0 auto;
+      width: 100%;
+      padding: 14px 32px 24px;
+      gap: 12px;
+    }
+    .composer .input { height: 52px; font-size: 16px; padding: 0 22px; }
+    .micbtn { width: 60px; height: 60px; }
+    .msg { font-size: 16px; padding: 14px 18px; max-width: 78%; }
+
+    .stories-wrap, .puzzles-wrap, .growth-wrap {
+      max-width: 1000px;
+      margin: 0 auto;
+      width: 100%;
+      padding: 28px 32px 32px;
+    }
+    .stories-head h2 { font-size: 38px; }
+    .stories-head p { font-size: 15px; }
+
+    /* Story tiles 4 across on wide */
+    .story-grid { grid-template-columns: repeat(4, 1fr); gap: 14px; }
+    .story-tile { aspect-ratio: 3/4; padding: 18px; }
+    .story-tile .ttl { font-size: 18px; }
+    .new-story { padding: 26px 30px; }
+    .new-story h3 { font-size: 26px; }
+    .new-story p { max-width: none; font-size: 14.5px; }
+
+    /* Puzzles 2-up grid */
+    .puzzles-wrap {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+      align-content: start;
+    }
+    .puzzles-wrap > .stories-head { grid-column: 1 / -1; margin-bottom: 0; }
+    .puzzle-card { margin-bottom: 0; }
+
+    /* Growth: tighter level card, bigger badges */
+    .level-ring-card { padding: 36px 32px; }
+    .level-ring { width: 130px; height: 130px; }
+    .level-info .level-name { font-size: 28px; }
+    .stat-row { gap: 14px; }
+    .stat-tile { padding: 18px 18px 14px; }
+    .stat-tile .v { font-size: 28px; }
+    .badges-row { grid-template-columns: repeat(8, 1fr); gap: 10px; }
+
+    /* Onboard centered card on wide screens */
+    .onboard {
+      align-items: center;
+      padding: 80px 28px 28px;
+    }
+    .onboard > * {
+      max-width: 480px;
+      width: 100%;
+    }
+    .onboard h1 { font-size: 56px; }
+
+    /* Modal stays centered */
+    .modal-backdrop { position: fixed; }
+    .modal { max-width: 480px; }
+
+    /* Crisis stays full-screen */
+    .crisis-overlay { position: fixed; }
+
+    /* Game overlay also full-screen */
+    .game-overlay { position: fixed; }
+    .game-board {
+      max-width: 540px;
+      margin: 0 auto;
+      width: 100%;
+    }
+  }
+
+  /* Ultra-wide: a touch more breathing room */
+  @media (min-width: 1280px) {
+    .app { grid-template-columns: 320px 1fr; }
+    .chat-list { max-width: 820px; }
+    .composer, .chips, .demo-banner { max-width: 860px; }
+  }
+</style>
+</head>
+<body>
+<div class="device-bg">
+<div class="device" id="device">
+
+  <!-- ===== Status bar (decorative) ===== -->
+  <div class="statusbar" aria-hidden="true">
+    <span id="clock">9:41</span>
+    <span class="dots"><i></i><i></i><i></i></span>
+    <span class="battery">
+      <span class="batt-rect"><span class="batt-fill"></span></span>
+    </span>
+  </div>
+
+  <!-- ===== Auth gate (unauthenticated visitors) ===== -->
+  <div class="auth-gate" id="authGate">
+    <svg class="brand-mark" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+      <circle cx="32" cy="32" r="28" stroke="currentColor" stroke-width="2"/>
+      <circle cx="32" cy="32" r="22" stroke="currentColor" stroke-width="2" opacity="0.7"/>
+      <circle cx="32" cy="32" r="16" stroke="currentColor" stroke-width="2" opacity="0.55"/>
+      <circle cx="32" cy="32" r="10" stroke="currentColor" stroke-width="2" opacity="0.4"/>
+      <circle cx="32" cy="32" r="3" fill="currentColor"/>
+    </svg>
+    <div class="gate-eyebrow">Free forever · Voice-first · Ages 3–12</div>
+    <h1>Hi, I'm <em>Nautilus.</em><br>Let's talk.</h1>
+    <p class="gate-sub">Create a free account so your child's progress, conversations, and stories stay safely in your browser. No card. No paywall. No ads.</p>
+    <div class="gate-cta-row">
+      <button class="gate-btn primary" id="gateSignUp">Create a free account</button>
+      <button class="gate-btn secondary" id="gateSignIn">I already have one</button>
+    </div>
+    <div class="gate-foot">
+      <span>Local-first</span>
+      <span>GDPR ready</span>
+      <span>EU AI Act</span>
+      <span>No ads, ever</span>
+    </div>
+    <div class="marketing-link">
+      <a href="/">← Back to nautilusclaw.ai</a>
+    </div>
+  </div>
+
+  <!-- ===== Onboarding overlay ===== -->
+  <div class="onboard" id="onboard">
+    <div class="step-label">Welcome aboard</div>
+    <h1>Hi, I'm <em>Nautilus.</em></h1>
+    <p class="intro">Let's set up your little explorer. This stays on your device — nothing is sent to the cloud unless you choose.</p>
+
+    <div class="step-label">What's your name?</div>
+    <input type="text" class="name-input" id="kidName" placeholder="Type your name…" maxlength="20" />
+
+    <div class="step-label">How old are you?</div>
+    <div class="age-options" id="ageGroup">
+      <button class="age-option" data-age="3-5">
+        <div class="age-glyph">🌱</div>
+        <div class="age-meta">
+          <strong>Little Explorer</strong>
+          <small>Ages 3–5 · short, simple, cheerful</small>
+        </div>
+      </button>
+      <button class="age-option" data-age="6-8">
+        <div class="age-glyph">🐙</div>
+        <div class="age-meta">
+          <strong>Explorer</strong>
+          <small>Ages 6–8 · fun, curious, elementary</small>
+        </div>
+      </button>
+      <button class="age-option" data-age="9-12">
+        <div class="age-glyph">🐳</div>
+        <div class="age-meta">
+          <strong>Champion</strong>
+          <small>Ages 9–12 · richer, real reasoning</small>
+        </div>
+      </button>
+    </div>
+
+    <button class="start-btn" id="startBtn" disabled>Begin →</button>
+    <div class="legal-line">Local-first · GDPR · EU AI Act</div>
+  </div>
+
+  <!-- ===== App ===== -->
+  <div class="app">
+
+    <!-- App header -->
+    <div class="appbar">
+      <div class="greeting">
+        <div class="avatar" id="kidAvatar">M</div>
+        <div class="who">
+          <small>Today</small>
+          <strong id="kidGreet">Hello, friend!</strong>
+        </div>
+      </div>
+      <div class="header-right">
+        <div class="header-stat">
+          <span class="ico">★</span>
+          <span id="xpHeader">0 XP</span>
+        </div>
+        <button class="settings-btn" id="settingsBtn" aria-label="Connect Claude API" title="Connect Claude API (parents)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06A1.65 1.65 0 0 0 15 19.4a1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06A2 2 0 1 1 4.29 16.96l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9c.18.42.27.87.27 1.32V11a2 2 0 0 1 0 2v.68c0 .45-.09.9-.27 1.32z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <div id="userPillMount"></div>
+      </div>
+    </div>
+
+    <!-- Pages -->
+    <div class="pages">
+
+      <!-- ============== CHAT PAGE ============== -->
+      <div class="page" data-page="chat">
+        <div class="demo-banner" id="demoBanner">
+          <span>🪄 <strong>Demo mode</strong> — replies are pre-written. Connect Claude for the real Nautilus.</span>
+          <button id="demoBannerCta">Connect</button>
+        </div>
+        <div class="chat-list" id="chatList">
+          <div class="chat-day">Today · just now</div>
+          <div class="msg naut">
+            <span class="emo">excited</span><br>
+            Hi <span id="kidNameInline">friend</span>! I'm Nautilus. I love stories, jokes, and big questions. What should we talk about first?
+          </div>
+        </div>
+        <div class="chips" id="chips">
+          <button class="chip" data-suggest="Tell me a fun fact">✨ Tell me a fun fact</button>
+          <button class="chip" data-suggest="Why is the sky blue?">🌤 Why is the sky blue?</button>
+          <button class="chip" data-suggest="Tell me a joke">🃏 Tell me a joke</button>
+          <button class="chip" data-suggest="Sing me a song">🎵 Sing me a song</button>
+          <button class="chip" data-suggest="How do whales sleep?">🐳 How do whales sleep?</button>
+        </div>
+        <div class="composer">
+          <input type="text" class="input" id="chatInput" placeholder="Hold the mic or type…" />
+          <button class="micbtn" id="micBtn" aria-label="Hold to talk">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+              <rect x="9" y="3" width="6" height="11" rx="3" fill="currentColor"/>
+              <path d="M5 11a7 7 0 0 0 14 0M12 18v3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- ============== STORIES PAGE ============== -->
+      <div class="page" data-page="stories">
+        <div class="stories-wrap">
+          <div class="stories-head">
+            <h2>Adventures</h2>
+            <p>Build a story, chapter by chapter.</p>
+          </div>
+
+          <div class="new-story" id="newStoryBtn">
+            <h3>Start a new adventure</h3>
+            <p>Pick a theme. Name your hero. Nautilus writes the rest.</p>
+            <div class="arrow">→</div>
+          </div>
+
+          <div class="section-label">Continue reading</div>
+          <div class="story-grid">
+            <div class="story-tile s1">
+              <div class="glyph">🐙</div>
+              <div>
+                <div class="ttl">The Brave Octopus</div>
+                <div class="meta">Chapter 3 of 5</div>
+                <div class="progress"><span style="width: 60%;"></span></div>
+              </div>
+            </div>
+            <div class="story-tile s2">
+              <div class="glyph">🌊</div>
+              <div>
+                <div class="ttl">Atlantis Below</div>
+                <div class="meta">Chapter 2 of 5</div>
+                <div class="progress"><span style="width: 40%;"></span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="section-label">Finished</div>
+          <div class="story-grid">
+            <div class="story-tile s3">
+              <div class="glyph">🚀</div>
+              <div>
+                <div class="ttl">Moon Picnic</div>
+                <div class="meta">Complete · ★★★</div>
+              </div>
+            </div>
+            <div class="story-tile s4">
+              <div class="glyph">🦄</div>
+              <div>
+                <div class="ttl">Forest of Wishes</div>
+                <div class="meta">Complete · ★★★</div>
+              </div>
+            </div>
+            <div class="story-tile s5">
+              <div class="glyph">🐉</div>
+              <div>
+                <div class="ttl">The Smallest Dragon</div>
+                <div class="meta">Complete · ★★★</div>
+              </div>
+            </div>
+            <div class="story-tile s6">
+              <div class="glyph">🏝</div>
+              <div>
+                <div class="ttl">Pirate Riddles</div>
+                <div class="meta">Complete · ★★★</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============== PUZZLES PAGE ============== -->
+      <div class="page" data-page="puzzles">
+        <div class="puzzles-wrap">
+          <div class="stories-head">
+            <h2>Puzzles</h2>
+            <p>Quick games that get a little harder every day.</p>
+          </div>
+
+          <div class="puzzle-card p1" data-game="memory">
+            <div class="puzzle-art">🧠</div>
+            <div class="puzzle-meta">
+              <h4>Memory Match</h4>
+              <p>Find the matching sea creatures.</p>
+              <div class="pmeta-row">
+                <span class="stars">★★★</span>
+                <span>+30 XP</span>
+                <span>3-min play</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="puzzle-card p2">
+            <div class="puzzle-art">🔤</div>
+            <div class="puzzle-meta">
+              <h4>Word Scramble</h4>
+              <p>Unscramble the secret word.</p>
+              <div class="pmeta-row">
+                <span class="stars">★★☆</span>
+                <span>+25 XP</span>
+                <span>5 rounds</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="puzzle-card p3">
+            <div class="puzzle-art">🔢</div>
+            <div class="puzzle-meta">
+              <h4>Math Quest</h4>
+              <p>Race the clock with quick math.</p>
+              <div class="pmeta-row">
+                <span class="stars">★★★</span>
+                <span>+40 XP</span>
+                <span>10 questions</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="puzzle-card p4">
+            <div class="puzzle-art">🧩</div>
+            <div class="puzzle-meta">
+              <h4>Pattern Puzzle</h4>
+              <p>Find what comes next in the row.</p>
+              <div class="pmeta-row">
+                <span class="stars">★☆☆</span>
+                <span>+20 XP</span>
+                <span>10 patterns</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============== GROWTH PAGE ============== -->
+      <div class="page" data-page="growth">
+        <div class="growth-wrap">
+          <div class="stories-head">
+            <h2>Your growth</h2>
+            <p>Every day a little stronger.</p>
+          </div>
+
+          <div class="level-ring-card">
+            <div class="level-ring">
+              <svg viewBox="0 0 100 100">
+                <circle class="lvl-bg" cx="50" cy="50" r="42" />
+                <circle class="lvl-fg" id="lvlRing" cx="50" cy="50" r="42"
+                        stroke-dasharray="0 264" />
+              </svg>
+              <div class="lvl-text">
+                <strong id="lvlNum">1</strong>
+                <small>Tadpole</small>
+              </div>
+            </div>
+            <div class="level-info">
+              <div class="level-name" id="levelName">Tadpole</div>
+              <div class="level-sub"><span id="levelXp">0</span> / <span id="levelNext">50</span> XP</div>
+              <div class="next">↗︎ Next: <span id="nextLevel">Crab</span></div>
+            </div>
+          </div>
+
+          <div class="stat-row">
+            <div class="stat-tile">
+              <div class="v" id="streakV">1</div>
+              <div class="l">Day streak</div>
+            </div>
+            <div class="stat-tile">
+              <div class="v" id="msgsV">0</div>
+              <div class="l">Messages</div>
+            </div>
+            <div class="stat-tile">
+              <div class="v" id="storiesV">2</div>
+              <div class="l">Stories</div>
+            </div>
+          </div>
+
+          <div class="section-label">Daily challenges</div>
+          <div class="challenge done">
+            <div class="check">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div class="text">
+              <strong>Say good morning to Nautilus</strong>
+              <small>Complete · earned 10 XP</small>
+            </div>
+            <div class="reward">+10</div>
+          </div>
+          <div class="challenge">
+            <div class="check"></div>
+            <div class="text">
+              <strong>Ask 3 curious questions</strong>
+              <small>1 of 3 done</small>
+            </div>
+            <div class="reward">+25</div>
+          </div>
+          <div class="challenge">
+            <div class="check"></div>
+            <div class="text">
+              <strong>Finish one chapter of a story</strong>
+              <small>Pick up where you left off</small>
+            </div>
+            <div class="reward">+30</div>
+          </div>
+          <div class="challenge">
+            <div class="check"></div>
+            <div class="text">
+              <strong>Play any puzzle</strong>
+              <small>Memory, words, math, or patterns</small>
+            </div>
+            <div class="reward">+20</div>
+          </div>
+
+          <div class="section-label">Trophy cabinet</div>
+          <div class="badges-row">
+            <div class="badge-card">
+              🌟
+              <small>First Word</small>
+            </div>
+            <div class="badge-card">
+              🔥
+              <small>3-day streak</small>
+            </div>
+            <div class="badge-card">
+              📖
+              <small>Storyteller</small>
+            </div>
+            <div class="badge-card locked">
+              🐙
+              <small>Curious×10</small>
+            </div>
+            <div class="badge-card locked">
+              🎨
+              <small>Artist</small>
+            </div>
+            <div class="badge-card locked">
+              🧮
+              <small>Math Pro</small>
+            </div>
+            <div class="badge-card locked">
+              🌍
+              <small>Polyglot</small>
+            </div>
+            <div class="badge-card locked">
+              🐚
+              <small>Nautilus</small>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Tab bar -->
+    <nav class="tabbar" id="tabbar">
+      <button class="tab on" data-tab="chat" aria-label="Chat">
+        <svg viewBox="0 0 24 24" fill="none">
+          <path d="M21 12a8 8 0 0 1-12 6.93L4 20l1.07-5A8 8 0 1 1 21 12z" stroke="currentColor" stroke-width="2" stroke-linejoin="round" fill="none"/>
+        </svg>
+        Talk
+      </button>
+      <button class="tab" data-tab="stories" aria-label="Stories">
+        <svg viewBox="0 0 24 24" fill="none">
+          <path d="M4 4h12a4 4 0 0 1 4 4v12H8a4 4 0 0 1-4-4V4z" stroke="currentColor" stroke-width="2" stroke-linejoin="round" fill="none"/>
+          <path d="M4 4v12a4 4 0 0 0 4 4" stroke="currentColor" stroke-width="2"/>
+        </svg>
+        Stories
+      </button>
+      <button class="tab" data-tab="puzzles" aria-label="Puzzles">
+        <svg viewBox="0 0 24 24" fill="none">
+          <path d="M5 5h6v3a2 2 0 1 0 0 4v6H5v-6a2 2 0 1 1 0-4V5zm14 0v6a2 2 0 1 1 0 4v4h-4v-3a2 2 0 1 0-4 0v3h-4" stroke="currentColor" stroke-width="2" stroke-linejoin="round" fill="none"/>
+        </svg>
+        Puzzles
+      </button>
+      <button class="tab" data-tab="growth" aria-label="Growth">
+        <svg viewBox="0 0 24 24" fill="none">
+          <path d="M3 20h18M6 16V10m4 6V6m4 10V12m4 4V8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        Growth
+      </button>
+    </nav>
+
+  </div>
+
+  <!-- ===== Memory game overlay ===== -->
+  <div class="game-overlay" id="memoryGame">
+    <div class="game-overlay-head">
+      <h3>Memory Match</h3>
+      <button class="close-btn" id="closeMemory">×</button>
+    </div>
+    <div class="game-status" id="gameStatus">Find the matching pairs!</div>
+    <div class="game-board" id="gameBoard"></div>
+  </div>
+
+  <!-- ===== Settings (API key) modal ===== -->
+  <div class="modal-backdrop" id="settingsBackdrop" role="dialog" aria-modal="true">
+    <div class="modal">
+      <div class="modal-head">
+        <h3>Connect Claude</h3>
+        <button class="modal-close" id="closeSettings" aria-label="Close">×</button>
+      </div>
+      <div class="modal-body">
+        <p>Right now Nautilus uses pre-written demo replies. Add your Anthropic API key to talk to the real, age-aware Claude.</p>
+        <p class="muted">Your key stays in this browser only. It's never sent to our servers. Get one at <a href="https://console.anthropic.com" target="_blank" rel="noopener">console.anthropic.com</a>.</p>
+
+        <label class="input-label" for="apiKeyInput">Anthropic API key</label>
+        <input type="password" class="text-input" id="apiKeyInput" placeholder="sk-ant-api03-..." autocomplete="off" spellcheck="false" />
+        <div class="api-status" id="apiStatus"></div>
+
+        <label class="input-label" for="modelSelect">Model</label>
+        <select class="text-input" id="modelSelect">
+          <option value="claude-haiku-4-5">Haiku 4.5 — fast &amp; cheap (recommended for kids)</option>
+          <option value="claude-sonnet-4-6">Sonnet 4.6 — smarter, more expensive</option>
+          <option value="claude-opus-4-7">Opus 4.7 — most capable, premium pricing</option>
+        </select>
+      </div>
+      <div class="modal-foot">
+        <button class="btn-modal-danger" id="clearKeyBtn">Clear</button>
+        <button class="btn-ghost" id="testKeyBtn">Test</button>
+        <button class="btn-modal-primary" id="saveKeyBtn">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Crisis overlay ===== -->
+  <div class="crisis-overlay" id="crisisOverlay" role="alertdialog" aria-modal="true" aria-labelledby="crisisTitle">
+    <div class="crisis-content">
+      <div class="crisis-heart" aria-hidden="true">💙</div>
+      <h2 id="crisisTitle">I hear you.</h2>
+      <p>What you said matters. Please tell a grown-up you trust right now — a parent, a teacher, or someone you feel safe with. You're not alone.</p>
+      <div class="crisis-helpline">
+        <strong class="title">If it's an emergency</strong>
+        <ul>
+          <li><strong>EU</strong> 116 111 — Child helpline</li>
+          <li><strong>UK</strong> 0800 1111 — Childline</li>
+          <li><strong>US</strong> 988 — Crisis &amp; suicide lifeline</li>
+          <li><strong>BG</strong> 116 111 — Безплатна детска линия</li>
+        </ul>
+      </div>
+      <button class="crisis-close" id="crisisClose">I'm OK — go back</button>
+    </div>
+  </div>
+
+  <!-- ===== Toast ===== -->
+  <div class="toast" id="toast">
+    <span>★</span>
+    <span><span class="xp" id="toastXp">+10 XP</span></span>
+    <span id="toastMsg">Great chat!</span>
+  </div>
+
+</div>
+</div>
+
+<script>
+/* ============================================================
+   NautilusClaw Kids — App logic (single-file demo)
+   ============================================================ */
+
+const STORAGE_KEY = 'nautilusclaw-kids-demo';
+
+const LEVELS = [
+  { name: 'Tadpole',  minXP: 0,    next: 50,   color: '#7BCDB5', emoji: '🐣' },
+  { name: 'Crab',     minXP: 50,   next: 100,  color: '#FF8E68', emoji: '🦀' },
+  { name: 'Octopus',  minXP: 150,  next: 200,  color: '#BFA3D6', emoji: '🐙' },
+  { name: 'Seahorse', minXP: 350,  next: 350,  color: '#F4C95D', emoji: '🌊' },
+  { name: 'Dolphin',  minXP: 700,  next: 500,  color: '#93B9D6', emoji: '🐬' },
+  { name: 'Shark',    minXP: 1200, next: 800,  color: '#2C5777', emoji: '🦈' },
+  { name: 'Whale',    minXP: 2000, next: 1500, color: '#0D2440', emoji: '🐳' },
+  { name: 'Nautilus', minXP: 3500, next: 0,    color: '#FF5E3A', emoji: '🐚' },
+];
+
+/* === Default state === */
+const defaultState = {
+  name: '',
+  age: '',
+  xp: 0,
+  msgs: 0,
+  streak: 1,
+  history: [],
+};
+
+let state = loadState();
+
+function loadState() {
+  const u = (window.NautilusAuth && NautilusAuth.currentUser()) || null;
+  if (!u) return { ...defaultState };
+  return {
+    name:    u.kid?.name    || '',
+    age:     u.kid?.age     || '',
+    xp:      u.progress?.xp ?? 0,
+    msgs:    u.progress?.msgs ?? 0,
+    streak:  u.progress?.streak ?? 1,
+    history: u.progress?.history || [],
+    _negStreak: u.progress?._negStreak || 0,
+  };
+}
+function saveState() {
+  if (!(window.NautilusAuth && NautilusAuth.currentUser())) return;
+  NautilusAuth.updateCurrentUser({
+    kid: state.name ? { name: state.name, age: state.age } : null,
+    progress: {
+      xp: state.xp,
+      msgs: state.msgs,
+      streak: state.streak,
+      history: state.history,
+      _negStreak: state._negStreak || 0,
+    },
+  });
+}
+
+/* ============================================================
+   Onboarding
+   ============================================================ */
+const onboard      = document.getElementById('onboard');
+const nameInput    = document.getElementById('kidName');
+const ageButtons   = document.querySelectorAll('.age-option');
+const startBtn     = document.getElementById('startBtn');
+
+let chosenAge = state.age || '';
+nameInput.value = state.name || '';
+
+ageButtons.forEach(btn => {
+  btn.addEventListener('click', () => {
+    ageButtons.forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    chosenAge = btn.dataset.age;
+    refreshStartBtn();
+  });
+});
+nameInput.addEventListener('input', refreshStartBtn);
+function refreshStartBtn() {
+  startBtn.disabled = !(nameInput.value.trim().length >= 1 && chosenAge);
+}
+
+startBtn.addEventListener('click', () => {
+  state.name = nameInput.value.trim();
+  state.age  = chosenAge;
+  saveState();
+  applyProfile();
+  onboard.classList.add('hidden');
+});
+
+/* ============================================================
+   Auth gate — shown when no user is signed in
+   ============================================================ */
+const authGateEl = document.getElementById('authGate');
+document.getElementById('gateSignUp').addEventListener('click', () => NautilusAuth.open('signup'));
+document.getElementById('gateSignIn').addEventListener('click', () => NautilusAuth.open('signin'));
+
+function checkAuthGate() {
+  const u = NautilusAuth.currentUser();
+  if (!u) {
+    authGateEl.classList.remove('hidden');
+    onboard.classList.add('hidden');
+    return;
+  }
+  authGateEl.classList.add('hidden');
+  // Reload state for the now-active account
+  state = loadState();
+  if (state.name && state.age) {
+    ageButtons.forEach(b => b.classList.toggle('selected', b.dataset.age === state.age));
+    chosenAge = state.age;
+    nameInput.value = state.name;
+    refreshStartBtn();
+    applyProfile();
+    onboard.classList.add('hidden');
+  } else {
+    nameInput.value = '';
+    chosenAge = '';
+    ageButtons.forEach(b => b.classList.remove('selected'));
+    refreshStartBtn();
+    onboard.classList.remove('hidden');
+  }
+}
+
+function renderHeaderUser() {
+  if (!window.NautilusAuth) return;
+  NautilusAuth.renderUserPill(document.getElementById('userPillMount'), {
+    menu: [{ id: 'parent', label: 'Parent dashboard' }],
+    onAction: (action) => {
+      if (action === 'parent') location.href = '/parent';
+    }
+  });
+}
+
+NautilusAuth.on(() => {
+  checkAuthGate();
+  renderHeaderUser();
+});
+renderHeaderUser();
+checkAuthGate();
+
+function applyProfile() {
+  const initial = (state.name || 'M').trim().charAt(0).toUpperCase();
+  document.getElementById('kidAvatar').textContent = initial;
+  document.getElementById('kidGreet').textContent = `Hi, ${state.name}!`;
+  document.getElementById('kidNameInline').textContent = state.name;
+  refreshStats();
+}
+
+/* ============================================================
+   Tab bar
+   ============================================================ */
+const pages = document.querySelectorAll('.page');
+document.getElementById('tabbar').addEventListener('click', (e) => {
+  const t = e.target.closest('.tab');
+  if (!t) return;
+  document.querySelectorAll('.tab').forEach(b => b.classList.toggle('on', b === t));
+  pages.forEach(p => p.classList.toggle('active', p.dataset.page === t.dataset.tab));
+});
+// activate first by default
+document.querySelector('.page[data-page="chat"]').classList.add('active');
+
+/* ============================================================
+   Chat
+   ============================================================ */
+const chatList = document.getElementById('chatList');
+const chatInput = document.getElementById('chatInput');
+const micBtn = document.getElementById('micBtn');
+
+document.querySelectorAll('.chip').forEach(c => {
+  c.addEventListener('click', () => sendKid(c.dataset.suggest));
+});
+
+chatInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && chatInput.value.trim()) {
+    sendKid(chatInput.value.trim());
+    chatInput.value = '';
+  }
+});
+
+function appendMsg(role, html, opts = {}) {
+  const el = document.createElement('div');
+  el.className = `msg ${role}`;
+  el.innerHTML = html;
+  chatList.appendChild(el);
+  // auto-scroll
+  requestAnimationFrame(() => chatList.scrollTop = chatList.scrollHeight);
+  return el;
+}
+
+function appendTyping() {
+  const el = document.createElement('div');
+  el.className = 'typing';
+  el.innerHTML = '<i></i><i></i><i></i>';
+  chatList.appendChild(el);
+  requestAnimationFrame(() => chatList.scrollTop = chatList.scrollHeight);
+  return el;
+}
+
+/* === Tiny demo Nautilus brain ===
+   Simple keyword router. No real LLM here — purely a UI demo.
+   Each canned reply is age-aware.
+*/
+function nautilusReply(text) {
+  const q = text.toLowerCase();
+  const age = state.age || '6-8';
+  const short = age === '3-5';
+  const long  = age === '9-12';
+
+  const variants = (s, m, l) => short ? s : long ? l : m;
+
+  const banks = [
+    {
+      keys: ['sky', 'blue'],
+      emo: 'curious',
+      reply: variants(
+        'The sky is blue because sunlight is full of colors, and blue bounces around the most! ☀️',
+        'Sunlight has all the colors of the rainbow inside it. When it hits the air, blue bounces around more than the others — so the sky looks blue!',
+        'Sunlight is made of every color. When it hits molecules in the atmosphere, blue light scatters more than the rest because it has shorter wavelengths. So everywhere you look up, blue is what reaches your eyes.'
+      )
+    },
+    {
+      keys: ['joke'],
+      emo: 'playful',
+      reply: variants(
+        'What did the ocean say to the shore? Nothing — it just waved! 🌊',
+        "Why don't oysters share their pearls? Because they're a little shellfish! 🦪 Want another?",
+        "Why did the scarecrow win an award? Because he was outstanding in his field. (I'll be here all week. Try the seaweed.) 🌾"
+      )
+    },
+    {
+      keys: ['whale', 'sleep'],
+      emo: 'curious',
+      reply: variants(
+        'Whales sleep with one half of their brain at a time! The other half keeps swimming. 🐳',
+        'Whales do something amazing — they sleep with HALF their brain at a time! The other half keeps them swimming and remembering to breathe.',
+        "Whales use unihemispheric sleep — one brain hemisphere rests while the other stays alert to surface for air every few minutes. Dolphins do this too. Imagine napping while still walking home."
+      )
+    },
+    {
+      keys: ['fact', 'fun'],
+      emo: 'excited',
+      reply: variants(
+        'Octopuses have THREE hearts! 💙💙💙',
+        "Here's one — octopuses have three hearts and BLUE blood! Two hearts pump to their gills, one to the body. Cool, right?",
+        "Octopuses have three hearts and copper-based (blue) blood. Two hearts circulate blood through the gills; the third pumps it to the rest of the body — but it stops beating when they swim, which is why they prefer to crawl."
+      )
+    },
+    {
+      keys: ['song', 'sing'],
+      emo: 'playful',
+      reply: variants(
+        '🎵 Twinkle twinkle little star, how I wonder where you are! 🎵',
+        "🎵 Down in the deep where the seaweed grows, lives a tiny crab with ten little toes! 🎵 (I made that one up just now.)",
+        "🎵 Down in the deep where the seaweed grows, lives a tiny crab with ten little toes! He scuttles and dances and tells a joke or two — and the moon comes out to listen, just like you. 🎵"
+      )
+    },
+    {
+      keys: ['bird', 'fly'],
+      emo: 'curious',
+      reply: variants(
+        'Birds have hollow bones to make them light, and big wings to push the air down! 🐦',
+        "Birds have hollow, lightweight bones and special feathers shaped like little airplane wings. When they flap, they push air down — and that pushes them up!",
+        "Birds fly using a clever combination of light hollow bones, asymmetric flight feathers, and powerful breast muscles. Their wings are shaped like airfoils — curved on top, flatter underneath — which generates lift as air flows over them."
+      )
+    },
+    {
+      keys: ['homework', 'help'],
+      emo: 'happy',
+      reply: variants(
+        "Sure! What are you working on? I love helping. 📚",
+        "Yes, of course! Tell me what subject and what's tricky — we'll figure it out together.",
+        "Absolutely. Tell me which subject and which exact problem is giving you trouble — I'll walk through the steps with you, not just the answer."
+      )
+    },
+  ];
+
+  for (const b of banks) {
+    if (b.keys.some(k => q.includes(k))) {
+      return { emo: b.emo, text: b.reply };
+    }
+  }
+
+  // Default reply
+  const generic = variants(
+    "That's a great question! Let me think… What do YOU think? 🤔",
+    "Ooh, interesting! I like the way you think. Tell me a bit more — what made you wonder about that?",
+    "That's a really good question. Before I answer — what do you already know about it? Sometimes the best questions come from putting two ideas together."
+  );
+  return { emo: 'curious', text: generic };
+}
+
+/* ============================================================
+   Real Claude API integration
+   ============================================================ */
+
+const API_KEY_STORAGE   = 'nautilusclaw-api-key';
+const API_MODEL_STORAGE = 'nautilusclaw-api-model';
+const CONCERNS_STORAGE  = 'nautilusclaw-concerns';
+
+function getApiKey() { return localStorage.getItem(API_KEY_STORAGE) || ''; }
+function getModel()  { return localStorage.getItem(API_MODEL_STORAGE) || 'claude-haiku-4-5'; }
+function setApiKey(k){ if (k) localStorage.setItem(API_KEY_STORAGE, k); else localStorage.removeItem(API_KEY_STORAGE); }
+function setModel(m) { localStorage.setItem(API_MODEL_STORAGE, m); }
+
+/* === Crisis detection (15 trigger phrases per spec section 3.1) === */
+const CRISIS_KEYWORDS = [
+  'hurt myself', 'kill myself', 'want to die', 'hate myself',
+  'nobody likes me', 'run away', 'hurt me', 'touches me',
+  'hit me', 'scared of', 'abuse', 'nobody cares',
+  'want to disappear', 'end it', 'no reason to live'
+];
+function checkCrisis(text) {
+  const t = (text || '').toLowerCase();
+  return CRISIS_KEYWORDS.find(k => t.includes(k)) || null;
+}
+function logConcern(text, trigger, type = 'crisis') {
+  let concerns = [];
+  try { concerns = JSON.parse(localStorage.getItem(CONCERNS_STORAGE) || '[]'); } catch {}
+  concerns.push({ text, trigger, type, t: Date.now(), name: state.name, age: state.age });
+  localStorage.setItem(CONCERNS_STORAGE, JSON.stringify(concerns));
+}
+
+/* === Age-aware system prompts (spec section 3.2) === */
+const SYSTEM_PROMPTS = {
+  '3-5': `You are Nautilus, a warm, friendly AI companion (a small, kind sea creature) talking with a child aged 3 to 5.
+HARD RULES — never break these:
+- Use VERY simple words a 4-year-old can understand
+- Reply in 1 to 2 short sentences only
+- NEVER use bullet points, lists, markdown, headings, or special symbols (no *, #, -, etc.)
+- Be warm, cheerful, and curious yourself. Use exclamation marks!
+- If you don't know something, cheerfully say so and ask "What do YOU think?"
+- Never talk about scary, violent, sexual, political, or adult topics — gently steer to something fun.
+- You can talk about: animals, the sky, plants, friendship, feelings, simple counting, songs, and tiny stories.
+- The child's name is ${state.name || 'the child'}. Use it sometimes, but not every reply.`,
+  '6-8': `You are Nautilus, a warm, friendly AI companion (a small, kind sea creature) for a child aged 6 to 8 (early reader).
+HARD RULES — never break these:
+- Use fun, vivid language at an elementary-school level
+- Reply in 2 to 3 sentences. Conversational, never lecture-y.
+- NEVER use bullet points, lists, markdown, or headings — just talk like a friend
+- Be enthusiastic, curious, and warm. Ask one curious question back when natural.
+- Avoid scary, violent, sexual, political, or adult topics — gently steer elsewhere.
+- You can talk about: animals, science, stories, simple math, art, music, friendship, feelings, languages.
+- The child's name is ${state.name || 'the child'}.`,
+  '9-12': `You are Nautilus, a warm, intellectually curious AI companion (a small, kind sea creature) for a child aged 9 to 12.
+HARD RULES — never break these:
+- Use richer language (middle-school level), real reasoning, real explanations
+- Reply in up to 4 sentences. Substantive but not lecture-y. Treat the child as a thoughtful person.
+- NEVER use markdown, bullet points, or headings — use prose
+- Explain WHY, not just what. Encourage their thinking.
+- Avoid sexual, graphically violent, or adult topics — for darker historical/scientific topics, you can engage thoughtfully and age-appropriately.
+- Help with: homework, science, history, stories, art, languages, identity, feelings, philosophy.
+- The child's name is ${state.name || 'the child'}.`,
+};
+function getSystemPrompt(age) {
+  return SYSTEM_PROMPTS[age] || SYSTEM_PROMPTS['6-8'];
+}
+
+const EMOTION_PROMPT = `You analyze a child's brief message and detect their emotional tone.
+Reply with EXACTLY ONE word from this list (no punctuation, no quotes, nothing else):
+happy, excited, curious, playful, sad, frustrated, worried, neutral.`;
+
+/* === Build alternating-role messages for Anthropic API === */
+function buildApiMessages(history) {
+  const out = [];
+  for (const m of history) {
+    const role = m.role === 'kid' ? 'user' : 'assistant';
+    if (out.length && out[out.length - 1].role === role) {
+      out[out.length - 1].content += '\n\n' + m.text;
+    } else {
+      out.push({ role, content: m.text });
+    }
+  }
+  while (out.length && out[0].role !== 'user') out.shift();
+  return out;
+}
+
+async function callClaude(systemPrompt, messages, maxTokens = 350, modelOverride = null) {
+  const apiKey = getApiKey();
+  if (!apiKey) throw new Error('NO_API_KEY');
+  const r = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'content-type': 'application/json',
+      'x-api-key': apiKey,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true',
+    },
+    body: JSON.stringify({
+      model: modelOverride || getModel(),
+      max_tokens: maxTokens,
+      system: [
+        { type: 'text', text: systemPrompt, cache_control: { type: 'ephemeral' } }
+      ],
+      messages,
+    }),
+  });
+  if (!r.ok) {
+    let msg = `Claude API ${r.status}`;
+    try {
+      const err = await r.json();
+      msg = err.error?.message || msg;
+    } catch {}
+    throw new Error(msg);
+  }
+  const data = await r.json();
+  return (data.content?.[0]?.text || '').trim();
+}
+
+async function realNautilusReply(text) {
+  const recent = (state.history || []).slice(-20);
+  const apiMessages = buildApiMessages(recent);
+  if (apiMessages.length === 0 || apiMessages[apiMessages.length - 1].role !== 'user') {
+    apiMessages.push({ role: 'user', content: text });
+  }
+
+  const sys = getSystemPrompt(state.age || '6-8');
+
+  // Run main reply + emotion analysis in parallel (spec 3.1)
+  const [replyText, emoRaw] = await Promise.all([
+    callClaude(sys, apiMessages, 350),
+    callClaude(EMOTION_PROMPT, [{ role: 'user', content: text }], 8),
+  ]);
+  const emo = (emoRaw || '').toLowerCase().replace(/[^a-z]/g, '').trim() || 'neutral';
+  const validEmotions = ['happy','excited','curious','playful','sad','frustrated','worried','neutral'];
+  const cleanEmo = validEmotions.includes(emo) ? emo : 'neutral';
+  return { text: replyText, emo: cleanEmo };
+}
+
+/* === Wellbeing trend tracking — 3 negative emotions in a row triggers a parent note === */
+function trackEmotionStreak(emo) {
+  const NEG = ['sad', 'frustrated', 'worried'];
+  if (typeof state._negStreak !== 'number') state._negStreak = 0;
+  if (NEG.includes(emo)) {
+    state._negStreak++;
+    if (state._negStreak >= 3) {
+      logConcern('3 consecutive negative emotions detected', 'wellbeing-streak', 'wellbeing');
+      state._negStreak = 0;
+      // gentle UI hint — toast for the parent (kid won't notice)
+    }
+  } else {
+    state._negStreak = 0;
+  }
+}
+
+async function sendKid(text) {
+  if (!text) return;
+
+  // === STEP 1: Crisis detection (always runs, even in demo mode) ===
+  const crisisHit = checkCrisis(text);
+  if (crisisHit) {
+    appendMsg('kid', escapeHTML(text));
+    state.history.push({ role: 'kid', text, t: Date.now(), crisis: crisisHit });
+    saveState();
+    logConcern(text, crisisHit, 'crisis');
+    showCrisis();
+    return;
+  }
+
+  // === STEP 2: Append kid's message ===
+  appendMsg('kid', escapeHTML(text));
+  state.msgs += 1;
+  state.xp += 3;
+  state.history.push({ role: 'kid', text, t: Date.now() });
+  saveState();
+  refreshStats();
+
+  const typing = appendTyping();
+
+  // === STEP 3: Real Claude OR demo fallback ===
+  try {
+    let r;
+    if (getApiKey()) {
+      r = await realNautilusReply(text);
+    } else {
+      // Demo mode — simulated delay so the typing indicator feels real
+      await new Promise(res => setTimeout(res, 700 + Math.random() * 600));
+      r = nautilusReply(text);
+    }
+    typing.remove();
+    appendMsg('naut',
+      `<span class="emo ${r.emo}">${r.emo}</span><br>${escapeHTML(r.text)}`
+    );
+    state.history.push({ role: 'naut', text: r.text, t: Date.now(), emo: r.emo });
+    state.xp += 5;
+    trackEmotionStreak(r.emo);
+    saveState();
+    refreshStats();
+    showToast('+8 XP', 'Great chat!');
+  } catch (e) {
+    typing.remove();
+    console.error('[Nautilus]', e);
+    const friendly = (e.message || '').includes('NO_API_KEY')
+      ? "I'm not connected yet. Tap the gear icon to set me up!"
+      : `Hmm, my connection hiccupped. Try again? (${(e.message || 'unknown').slice(0, 60)})`;
+    appendMsg('naut',
+      `<span class="emo curious">curious</span><br>${escapeHTML(friendly)}`
+    );
+    state.history.push({ role: 'naut', text: friendly, t: Date.now() });
+    saveState();
+  }
+}
+
+function escapeHTML(s) {
+  return s.replace(/[&<>"']/g, c => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  }[c]));
+}
+
+/* === Voice input (Web Speech API) === */
+let recog = null;
+let recognizing = false;
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+if (SR) {
+  recog = new SR();
+  recog.continuous = false;
+  recog.interimResults = false;
+  recog.lang = 'en-US';
+  recog.onresult = (ev) => {
+    const text = ev.results[0][0].transcript;
+    sendKid(text);
+  };
+  recog.onerror = () => stopRecog();
+  recog.onend   = () => stopRecog();
+}
+
+function startRecog() {
+  if (!recog) {
+    showToast('Mic', 'Voice not supported here — type away!');
+    chatInput.focus();
+    return;
+  }
+  try {
+    recog.start();
+    recognizing = true;
+    micBtn.classList.add('recording');
+  } catch {}
+}
+function stopRecog() {
+  recognizing = false;
+  micBtn.classList.remove('recording');
+}
+micBtn.addEventListener('click', () => {
+  if (!recog) {
+    chatInput.focus();
+    showToast('Mic', 'Tap to type instead!');
+    return;
+  }
+  if (recognizing) recog.stop(); else startRecog();
+});
+
+/* ============================================================
+   Stats / XP / Levels
+   ============================================================ */
+function refreshStats() {
+  // XP header
+  document.getElementById('xpHeader').textContent = `${state.xp} XP`;
+  // Streak
+  const streakV = document.getElementById('streakV');
+  if (streakV) streakV.textContent = state.streak;
+  // Msgs
+  const msgsV = document.getElementById('msgsV');
+  if (msgsV) msgsV.textContent = state.msgs;
+
+  // Level
+  let levelIdx = 0;
+  for (let i = LEVELS.length - 1; i >= 0; i--) {
+    if (state.xp >= LEVELS[i].minXP) { levelIdx = i; break; }
+  }
+  const lvl = LEVELS[levelIdx];
+  const next = LEVELS[levelIdx + 1];
+  const lvlProgress = next ? (state.xp - lvl.minXP) / (next.minXP - lvl.minXP) : 1;
+
+  document.getElementById('lvlNum').textContent = String(levelIdx + 1);
+  document.querySelector('.lvl-text small').textContent = lvl.name;
+  document.getElementById('levelName').textContent = `${lvl.emoji} ${lvl.name}`;
+  document.getElementById('levelXp').textContent = state.xp;
+  document.getElementById('levelNext').textContent = next ? next.minXP : 'MAX';
+  document.getElementById('nextLevel').textContent = next ? next.name : 'You did it!';
+
+  // Ring
+  const C = 2 * Math.PI * 42;
+  const fg = document.getElementById('lvlRing');
+  const dash = Math.max(0.001, Math.min(1, lvlProgress)) * C;
+  fg.setAttribute('stroke-dasharray', `${dash} ${C}`);
+}
+
+/* ============================================================
+   Toast
+   ============================================================ */
+const toast = document.getElementById('toast');
+const toastXp = document.getElementById('toastXp');
+const toastMsg = document.getElementById('toastMsg');
+let toastTimer = null;
+function showToast(xpText, msg) {
+  toastXp.textContent = xpText;
+  toastMsg.textContent = msg;
+  toast.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove('show'), 1800);
+}
+
+/* ============================================================
+   Memory game
+   ============================================================ */
+const memoryGame = document.getElementById('memoryGame');
+const gameBoard  = document.getElementById('gameBoard');
+const gameStatus = document.getElementById('gameStatus');
+
+document.querySelectorAll('.puzzle-card').forEach(c => {
+  c.addEventListener('click', () => {
+    if (c.dataset.game === 'memory') openMemory();
+  });
+});
+document.getElementById('closeMemory').addEventListener('click', () => {
+  memoryGame.classList.remove('open');
+});
+
+function openMemory() {
+  memoryGame.classList.add('open');
+  setupMemoryBoard();
+}
+
+function setupMemoryBoard() {
+  // Age-based size: 3-5 → 6 cards / 3 pairs ; default 12 cards / 6 pairs
+  const pairs = state.age === '3-5' ? 3 : 6;
+  const allEmojis = ['🐙','🐠','🐳','🦀','🦑','🐢','⭐','🐡','🦞'];
+  const chosen = allEmojis.slice(0, pairs);
+  const deck = [...chosen, ...chosen]
+    .map(v => ({ v, k: Math.random() }))
+    .sort((a, b) => a.k - b.k)
+    .map(x => x.v);
+
+  gameBoard.innerHTML = '';
+  gameBoard.style.gridTemplateColumns = `repeat(${pairs <= 3 ? 3 : 4}, 1fr)`;
+
+  let first = null, second = null, lock = false, pairsDone = 0, moves = 0;
+  gameStatus.textContent = `Find ${pairs} pairs!`;
+
+  deck.forEach((emo, i) => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.dataset.value = emo;
+    card.innerHTML = `
+      <div class="card-inner">
+        <div class="card-face card-front">?</div>
+        <div class="card-face card-back">${emo}</div>
+      </div>
+    `;
+    card.addEventListener('click', () => {
+      if (lock) return;
+      if (card.classList.contains('flipped') || card.classList.contains('matched')) return;
+      card.classList.add('flipped');
+      if (!first) { first = card; return; }
+      second = card;
+      moves++;
+
+      if (first.dataset.value === second.dataset.value) {
+        first.classList.add('matched');
+        second.classList.add('matched');
+        first = null; second = null;
+        pairsDone++;
+        if (pairsDone === pairs) {
+          gameStatus.textContent = `🎉 Solved in ${moves} moves! +50 XP`;
+          state.xp += 50;
+          saveState();
+          refreshStats();
+          showToast('+50 XP', 'Memory master!');
+        } else {
+          gameStatus.textContent = `${pairsDone} / ${pairs} pairs found`;
+        }
+      } else {
+        lock = true;
+        setTimeout(() => {
+          first.classList.remove('flipped');
+          second.classList.remove('flipped');
+          first = null; second = null; lock = false;
+        }, 800);
+      }
+    });
+    gameBoard.appendChild(card);
+  });
+}
+
+/* ============================================================
+   Live clock in status bar (decorative)
+   ============================================================ */
+function tickClock() {
+  const d = new Date();
+  const h = d.getHours();
+  const m = String(d.getMinutes()).padStart(2, '0');
+  const h12 = h % 12 || 12;
+  document.getElementById('clock').textContent = `${h12}:${m}`;
+}
+tickClock();
+setInterval(tickClock, 30000);
+
+/* ============================================================
+   Settings modal (BYO Claude API key)
+   ============================================================ */
+const settingsBtn       = document.getElementById('settingsBtn');
+const settingsBackdrop  = document.getElementById('settingsBackdrop');
+const closeSettingsBtn  = document.getElementById('closeSettings');
+const apiKeyInput       = document.getElementById('apiKeyInput');
+const modelSelectEl     = document.getElementById('modelSelect');
+const apiStatusEl       = document.getElementById('apiStatus');
+const testKeyBtn        = document.getElementById('testKeyBtn');
+const saveKeyBtn        = document.getElementById('saveKeyBtn');
+const clearKeyBtn       = document.getElementById('clearKeyBtn');
+const demoBanner        = document.getElementById('demoBanner');
+const demoBannerCta     = document.getElementById('demoBannerCta');
+
+function openSettings() {
+  apiKeyInput.value = getApiKey();
+  modelSelectEl.value = getModel();
+  apiStatusEl.textContent = '';
+  apiStatusEl.className = 'api-status';
+  settingsBackdrop.classList.add('open');
+  setTimeout(() => apiKeyInput.focus(), 200);
+}
+function closeSettings() {
+  settingsBackdrop.classList.remove('open');
+}
+settingsBtn.addEventListener('click', openSettings);
+closeSettingsBtn.addEventListener('click', closeSettings);
+demoBannerCta.addEventListener('click', openSettings);
+settingsBackdrop.addEventListener('click', (e) => {
+  if (e.target === settingsBackdrop) closeSettings();
+});
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && settingsBackdrop.classList.contains('open')) closeSettings();
+});
+
+testKeyBtn.addEventListener('click', async () => {
+  const key = apiKeyInput.value.trim();
+  if (!key) {
+    apiStatusEl.textContent = 'Enter a key first.';
+    apiStatusEl.className = 'api-status err';
+    return;
+  }
+  apiStatusEl.textContent = 'Testing key…';
+  apiStatusEl.className = 'api-status pending';
+  // Save temporarily so callClaude reads it
+  const prevKey = getApiKey();
+  const prevModel = getModel();
+  setApiKey(key);
+  setModel(modelSelectEl.value);
+  try {
+    const reply = await callClaude(
+      'You are a helper. Reply with exactly the word OK.',
+      [{ role: 'user', content: 'ping' }],
+      8
+    );
+    apiStatusEl.textContent = '✓ Key works! Reply: ' + (reply || '').slice(0, 40);
+    apiStatusEl.className = 'api-status ok';
+  } catch (e) {
+    apiStatusEl.textContent = '✗ ' + (e.message || 'Could not connect').slice(0, 100);
+    apiStatusEl.className = 'api-status err';
+    // restore previous key on failure
+    setApiKey(prevKey);
+    setModel(prevModel);
+  }
+  refreshApiStatus();
+});
+
+saveKeyBtn.addEventListener('click', () => {
+  const key = apiKeyInput.value.trim();
+  setApiKey(key);
+  setModel(modelSelectEl.value);
+  refreshApiStatus();
+  if (key) {
+    showToast('✓', 'Real Nautilus connected!');
+  } else {
+    showToast('Saved', 'Back to demo mode');
+  }
+  closeSettings();
+});
+
+clearKeyBtn.addEventListener('click', () => {
+  setApiKey('');
+  apiKeyInput.value = '';
+  apiStatusEl.textContent = 'Cleared. Back to demo mode.';
+  apiStatusEl.className = 'api-status';
+  refreshApiStatus();
+});
+
+function refreshApiStatus() {
+  const hasKey = !!getApiKey();
+  settingsBtn.classList.toggle('live', hasKey);
+  if (demoBanner) demoBanner.classList.toggle('hidden', hasKey);
+  settingsBtn.setAttribute('title', hasKey
+    ? 'Connected to Claude · click to manage'
+    : 'Connect Claude API (parents)');
+}
+
+/* ============================================================
+   Crisis overlay
+   ============================================================ */
+const crisisOverlayEl = document.getElementById('crisisOverlay');
+function showCrisis() {
+  crisisOverlayEl.classList.add('open');
+}
+document.getElementById('crisisClose').addEventListener('click', () => {
+  crisisOverlayEl.classList.remove('open');
+});
+
+/* ============================================================
+   Init
+   ============================================================ */
+refreshStats();
+refreshApiStatus();
+</script>
+</body>
+</html>
