@@ -1,6 +1,6 @@
 # NautilusClaw Kids
 
-Live: https://nautilusclaw-app.vercel.app/
+Live: https://nautilusclaw.com/
 
 ## October 26, 2026 update
 
@@ -42,3 +42,9 @@ Only explicitly allowed public assets are copied to `dist`; server helpers and c
 ## Free learning games
 
 `/learn` offers Math reef, an A–Z Alphabet garden, Letter detective / Word builder, and Pattern lagoon. Three age-guide levels change the puzzles. Five-puzzle rounds give hints and a clear ending; the alphabet can be explored freely. Game state stays in memory, with no accounts, analytics, or saved scores. Read-aloud is optional and uses browser speech. The production address is https://nautilusclaw.com.
+
+## Storybook Club
+
+`/stories` adds four complete written adventures: The Moonlight Post Office, The Forest of Lost Sounds, The Great Dino Picnic, and The Dragon Who Lost His Roar. Each has three reading levels, two independent choices (four path/ending combinations), an age-adjusted number puzzle, hints, optional browser speech with a stop control, and a complete printable story. All 48 combinations are validated. The original Curious Reef remains at `/adventure`, linked from the library. Storybook choices stay in page memory; no account, analytics, payment code, or persistent reading record is added.
+
+Validate with `npm test`, `npm run verify`, and `npm run build`. Preserve the uploaded `api/chat.js` SHA when publishing, as described above.

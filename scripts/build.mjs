@@ -1,6 +1,6 @@
 import {mkdir, copyFile, rm} from 'node:fs/promises';
 const publicFiles = ['index.html','pricing.html','billing.html','billing.js','plans.js','ocean.css','favicon.svg',
-  'learn.html','learning.js','learning.css','learning-core.mjs','adventure.html','adventure.js','parent.html','parent-preview.html','parent-view.js','guide.html',
+  'stories.html','stories.js','stories.css','story-data.mjs','learn.html','learning.js','learning.css','learning-core.mjs','adventure.html','adventure.js','parent.html','parent-preview.html','parent-view.js','guide.html',
   'app.html','auth.js','db.js','supabase-config.js'];
 await rm('dist', {recursive:true,force:true});
 await mkdir('dist',{recursive:true});
