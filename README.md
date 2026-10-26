@@ -64,3 +64,12 @@ Validate with `npm test`, `npm run verify`, and `npm run build`. Preserve the up
 - `npm test` covers answer attempts, hint counts, all companion/place combinations, fresh starts, legacy/malformed records, blocked storage, sample separation and contrast; `npm run verify` checks page destinations, anchors, JS and JSON-LD syntax.
 
 Live before/after Lighthouse results, full guest-flow checks, changed files and verification limits are recorded in [docs/reef-recap-verification.md](docs/reef-recap-verification.md). Home billing work is deferred until pricing approaches the viewport; home CSS is inlined from the shared source during the build.
+
+
+### Dark parent login
+
+The responsive `/login` page includes sign-in, parent registration, password
+recovery, accessible form states, and an always-visible guest option. It uses
+the existing Supabase database and a pinned, locally served SDK. See
+[supabase/SETUP.md](supabase/SETUP.md) for provider configuration and
+[docs/login-verification.md](docs/login-verification.md) for verification limits.

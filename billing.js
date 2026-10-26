@@ -82,7 +82,7 @@ async function init() {
     if (!$('#billingAccount')) return;
     $('#checkoutButton').disabled = !ready;
     $('#checkoutButton').textContent = !ready ? 'Family checkout coming soon' : cfg.mode === 'test' ? 'Open test checkout ↗' : 'Continue to Stripe ↗';
-    await script('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2');
+    await script('/vendor/supabase.js');
     await script('/supabase-config.js');await script('/auth.js');
     NautilusAuth.on(() => {refresh();if (pendingCheckout && NautilusAuth.currentUser()) {pendingCheckout = false;message('Signed in. Review your selection, then continue to Stripe.');}});
     $('#signInBilling').onclick = () => NautilusAuth.open('signin');
@@ -106,3 +106,4 @@ async function init() {
   }
 }
 init();
+

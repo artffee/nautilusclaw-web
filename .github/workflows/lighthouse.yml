@@ -13,13 +13,30 @@ jobs:
       fail-fast: false
       matrix:
         device: [mobile, desktop]
-        page: [home, adventure]
+        page: [home, adventure, login]
     steps:
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
         with:
           node-version: '24'
       - name: Install the audit tool
         run: npm install --prefix "$RUNNER_TEMP/lighthouse" lighthouse@13.5.0 --no-audit --no-fund
+      - name: Check public authentication service availability
+        if: matrix.page == 'login' && matrix.device == 'mobile'
+        run: |
+          node --input-type=module <<'JS'
+          const cfg = await (await fetch('https://nautilusclaw-app.vercel.app/supabase-config.js')).text();
+          const url = cfg.match(/url:\s*['"]([^'"]+)/)?.[1];
+          const key = cfg.match(/anonKey:\s*['"]([^'"]+)/)?.[1];
+          if (!url || !key || new URL(url).hostname !== 'zijjkbtxqjhnretrxawk.supabase.co') throw new Error('Unexpected public provider config');
+          for (const path of ['/auth/v1/settings','/rest/v1/parent?select=id&limit=0']) {
+            try {
+              const r = await fetch(url + path, {headers:{apikey:key,Authorization:'Bearer '+key,Prefer:'count=exact'},signal:AbortSignal.timeout(15000)});
+              const output={path,status:r.status,anonymousRows:r.headers.get('content-range')};
+              if(path.includes('settings') && r.ok) {const d=await r.json(); output.emailEnabled=d.external?.email;output.emailAutoconfirm=d.mailer_autoconfirm;output.signupsDisabled=d.disable_signup;}
+              console.log('AUTH_SERVICE_CHECK',JSON.stringify(output));
+            } catch(e) {console.log('AUTH_SERVICE_CHECK',JSON.stringify({path,error:e.cause?.code||e.name}));}
+          }
+          JS
       - name: Audit the deployed page
         env:
           DEVICE: ${{ matrix.device }}
@@ -27,7 +44,7 @@ jobs:
         run: |
           mkdir -p reports
           PAGE_PATH="/"
-          if [ "$PAGE" = adventure ]; then PAGE_PATH="/adventure"; fi
+          if [ "$PAGE" != home ]; then PAGE_PATH="/$PAGE"; fi
           PRESET=()
           if [ "$DEVICE" = desktop ]; then PRESET=(--preset=desktop); fi
           export CHROME_PATH="$(command -v google-chrome)"

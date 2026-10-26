@@ -19,6 +19,7 @@ for name,page in pages.items():
   if u.scheme or u.netloc:continue
   target=(root/(u.path.lstrip('/') or 'index.html')) if u.path else root/name
   if not target.suffix:target=target.with_suffix('.html')
+  if u.path == '/vendor/supabase.js':target=root/'node_modules/@supabase/supabase-js/dist/umd/supabase.js'
   assert target.exists(),f'{name}: missing {link}'
   if u.fragment and target.name in pages:assert u.fragment in pages[target.name].ids,f'{name}: missing anchor {link}'
 for folder in [root,root/'api',root/'lib',root/'scripts']:

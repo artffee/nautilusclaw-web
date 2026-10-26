@@ -52,3 +52,38 @@ are public by design — they ship in the browser anyway. Do **not** share the
 - Every chat, emotion tag, and safety flag stored per child, readable only by that parent
 - One-click GDPR erase that cascades server-side
 - The foundation for real (non-mock) learning summaries and parent alerts
+
+
+
+## Dedicated parent login (October 2026)
+
+`/login` reuses this project's Auth service and `public.parent` table. It asks only
+for a grown-up's email and password; it does not import guest records or create
+child profiles. Passwords go directly to Supabase Auth, never into `parent.state`.
+The SDK is pinned in package-lock.json and copied locally at build time.
+
+Before declaring live authentication verified, use the Supabase dashboard or a
+connected Supabase integration to confirm:
+
+- This existing project is active and the schema above is installed. Preserve
+  existing records. Check RLS on every exposed table, including any billing
+  tables. Test two disposable parent accounts against one another's row IDs.
+- Email/password authentication and email confirmation are enabled. Set the
+  provider's minimum password length to 12 and enable leaked-password protection
+  if available. The page enforces 12–128 characters for new passwords, but that
+  alone does not change the provider's server policy.
+- Site URL is `https://nautilusclaw.com`. Add exact redirect URLs for both
+  `/login?mode=signin` and `/login?mode=reset` on `https://nautilusclaw.com`,
+  `https://www.nautilusclaw.com`, and `https://nautilusclaw-app.vercel.app`.
+  Do not add production wildcards. Confirm email templates use the redirect URL.
+- Configure verified email delivery and confirm the service's authentication
+  rate limits. No client-only lockout is presented as brute-force protection.
+- Verify signup → confirmation → sign-in → parent row → sign-out, plus the full
+  emailed password recovery flow. No successful live flow has been claimed while
+  the provider connection remains unavailable.
+
+Sessions now use sessionStorage (with an in-memory fallback when unavailable),
+so parents sign in again in a new browser tab. The old localStorage session is
+not reused and is removed on sign-out. No password is saved by this application.
+Recovery links can establish a session in a new tab; after a successful password
+change, this app signs that tab out and asks for a fresh sign-in.
