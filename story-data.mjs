@@ -1,8 +1,57 @@
 export const LEVELS = {'3-5':'Little explorer','6-8':'Explorer','9-12':'Big explorer'};
 const words = (little, middle, big) => ({'3-5':little,'6-8':middle,'9-12':big});
 const puzzle = (prompt, a, op, b, choices, hint, why) => ({prompt,a,op,b,choices,hint,why});
+export const PLANETS = ['Mercury','Venus','Earth','Mars','Jupiter','Saturn','Uranus','Neptune'];
+export function planetPuzzle(level) {
+  const expected=PLANETS.slice(0,level==='3-5'?4:8);
+  return {kind:'planet-order',expected,choices:['Saturn','Earth','Neptune','Mars','Jupiter','Venus','Uranus','Mercury'].filter(p=>expected.includes(p)),
+    prompt:level==='3-5'?'Tap the first four planets in order, starting nearest the Sun. The little map can help.':'Tap all eight planets in order, starting nearest the Sun.',
+    hint:'Follow this order from the Sun: '+expected.join(' → ')+'.',why:level==='3-5'?'You did it! Mercury, Venus, Earth, Mars—the first four planets from the Sun.':'Your planet map is complete! All eight planets are in order from the Sun.'};
+}
+export function planetOrderResult(expected,selected) {
+  const firstMismatch=selected.findIndex((name,i)=>name!==expected[i]);
+  const complete=selected.length===expected.length;
+  return {complete,correct:complete&&firstMismatch===-1,firstMismatch};
+}
 
 export const STORIES = [
+  {
+    id:'planets',world:'Around the Solar System',title:'Nia and the Planet Parade',icon:'☀',theme:'planets',
+    blurb:'Help Nia put her planet map in order, from little Mercury to faraway Neptune.',skills:'Planet order · Observation · Curiosity',
+    openingTitle:'The mixed-up planet map',opening:words(
+      'Nia made a rocket from a cardboard box. Her toy robot, Orbit, held a planet map. Whoops! The planet cards fell down. “Let’s put them back,” said Nia. Their pretend space trip was ready to begin.',
+      'Nia’s cardboard rocket was ready for its first imaginary journey. Her co-pilot, a toy robot called Orbit, carried a map of the Solar System. Then a sneeze sent the planet cards flying. Saturn landed in a slipper. Earth slid under a cushion. “We need a map, not a planet jumble,” Nia laughed. First they would look for clues.',
+      'Nia had built an observatory from a blanket, two chairs, and a cardboard control panel. Orbit, her toy robot, was in charge of a map showing the eight planets in order from the Sun. Unfortunately, he was also in charge of balancing a very wobbly stack of books. One spectacular tumble later, the planet cards were scattered across the floor. Nia decided to rebuild the map by noticing how the worlds were different. Their spaceship was imaginary; the planet names were real.'
+    ),question:'Which clues should Nia explore first?',
+    routes:[
+      {label:'Meet the rocky planets',detail:'Look at Mercury, Venus, Earth, and Mars.',title:'Four rocky neighbors',text:words(
+        'Mercury came first, near the Sun. Then came Venus. Earth was third—that was home! Mars came next. Nia held the four cards carefully. Could you help put them in order?',
+        'Nia and Orbit began with Mercury, the planet nearest the Sun. Venus came next, followed by Earth and then Mars. These four inner planets have rocky surfaces. Nia drew a little house beside Earth on the map. “That’s where our adventure began,” she said. Now it was time to arrange the cards.',
+        'Orbit found the Mercury card beside the cardboard controls. Nia placed it nearest the Sun, followed by Venus, Earth, and Mars. These inner planets have solid, rocky surfaces. They were not four copies of the same world, but a family of very different neighbors. Nia marked Earth as home and checked the order once more before rebuilding the whole map.'
+      )},
+      {label:'Look for the giant planets',detail:'Find Jupiter, Saturn, Uranus, and Neptune.',title:'The giants farther out',text:words(
+        'Jupiter was the biggest planet. Saturn had beautiful rings. Uranus and Neptune were farther out. “We need the little planets too!” said Orbit. Nia spread out the cards. Let’s start near the Sun.',
+        'Farther from the Sun were Jupiter, Saturn, Uranus, and Neptune. Jupiter was the largest planet, while Saturn’s rings made Nia think of a very grand hat. Uranus and Neptune belonged beyond them on the map. “Biggest doesn’t mean first,” Nia told Orbit. They would sort by distance from the Sun, not by size.',
+        'Nia found Jupiter, the largest planet, and Saturn with its striking rings. Beyond them belonged Uranus and Neptune, the two ice giants. Orbit tried putting the biggest card first. “That would sort by size,” Nia explained. “Our map sorts by distance from the Sun.” Choosing a rule mattered: the same collection could be arranged in several ways, but only one would answer their question.'
+      )}
+    ],puzzleTitle:'Put the planets in order',puzzles:{'3-5':planetPuzzle('3-5'),'6-8':planetPuzzle('6-8'),'9-12':planetPuzzle('9-12')},
+    bridgeTitle:'A place for every planet',bridge:words(
+      'The first four were Mercury, Venus, Earth, and Mars. After them came Jupiter, Saturn, Uranus, and Neptune. Eight planets! Nia smiled at the map. What could she make to remember their names?',
+      'The map now led from Mercury to Venus, Earth, Mars, Jupiter, Saturn, Uranus, and Neptune. Eight different worlds, all traveling around the Sun. Nia knew her cards did not show the real sizes or the huge spaces between planets. They helped her remember the order. Now she wanted to share what she had learned.',
+      'Mercury, Venus, Earth, Mars, Jupiter, Saturn, Uranus, Neptune: the map had its order again. Nia wrote a note at the bottom: “Not to scale.” The cards could not show both the planets and the enormous distances between them accurately. Nor were the planets standing still in a straight line. A useful map did not have to show everything, but it should say what it was showing. What would Nia make from it?'
+    ),endingQuestion:'How should Nia share her discovery?',endings:[
+      {label:'Make a planet passport',detail:'Give every planet its own little page.',title:'Eight pages of wonder',text:words(
+        'Nia made a little book. Each planet got a page. Earth got a heart. Orbit got to hold the book. Their pretend rocket came home, ready for another story.',
+        'Nia folded a planet passport with a page for every world. On Earth’s page she drew a heart. On the last page she wrote a question she wanted to explore tomorrow. Orbit stamped the cover with a cardboard star. The adventure ended at home, but the wondering had only begun.',
+        'Nia made a passport of questions rather than pretending she knew everything. Each planet received a page, a name, and something she wanted to investigate next. Earth’s page had an extra line: “The place we can care for today.” Orbit added an enormous star to the cover. It was a good record of a journey that had traveled farther in curiosity than in kilometers.'
+      )},
+      {label:'Build a tabletop parade',detail:'Turn the planet cards into a display.',title:'A Solar System on the table',text:words(
+        'Nia lined up her cards. She pointed to each planet and said its name. Orbit bowed to the little audience of toys. The planet parade was ready. Everyone cheered for Earth, their home!',
+        'Nia arranged the planet cards across the table and invited her toys to a parade. She read every name from the Sun outward. A small sign explained that the sizes and spaces were pretend. Then she pointed to Earth. “And here,” she said, “is where our next real adventure starts.”',
+        'Nia built a tabletop parade and made a label: “Order from the Sun; sizes and distances not to scale.” When her audience of toys arrived, she explained why Jupiter could be the largest without being first. Orbit gave the demonstration a solemn beep of approval. The best part was not simply knowing eight names. It was being able to explain the rule connecting them.'
+      )}
+    ],activity:'Draw planet cards and put them in order from the Sun. Try the first four, or all eight. Label your picture “not to scale”—the real sizes and distances are very different.',reflect:'Which planet would you like to learn more about, and what would you ask?'
+  },
   {
     id:'space', world:'Among the stars', title:'The Moonlight Post Office', icon:'✦', theme:'space',
     blurb:'One small robot. One very important letter. A delivery across the stars.',

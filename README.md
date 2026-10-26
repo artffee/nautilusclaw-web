@@ -45,6 +45,10 @@ Only explicitly allowed public assets are copied to `dist`; server helpers and c
 
 ## Storybook Club
 
-`/stories` adds four complete written adventures: The Moonlight Post Office, The Forest of Lost Sounds, The Great Dino Picnic, and The Dragon Who Lost His Roar. Each has three reading levels, two independent choices (four path/ending combinations), an age-adjusted number puzzle, hints, optional browser speech with a stop control, and a complete printable story. All 48 combinations are validated. The original Curious Reef remains at `/adventure`, linked from the library. Storybook choices stay in page memory; no account, analytics, payment code, or persistent reading record is added.
+`/stories` adds five complete written adventures: Nia and the Planet Parade, The Moonlight Post Office, The Forest of Lost Sounds, The Great Dino Picnic, and The Dragon Who Lost His Roar. Each has three reading levels, two independent choices (four path/ending combinations), an age-adjusted number or planet-order puzzle, hints, optional browser speech with a stop control, and a complete printable story. All 60 combinations are validated. The original Curious Reef remains at `/adventure`, linked from the library. Storybook choices stay in page memory; no account, analytics, payment code, or persistent reading record is added.
 
 Validate with `npm test`, `npm run verify`, and `npm run build`. Preserve the uploaded `api/chat.js` SHA when publishing, as described above.
+
+### Planet story
+
+`/stories?story=planets` tells Nia and the Planet Parade. A tap-to-order puzzle covers Mercury through Mars for ages 3–5 and all eight planets for the older levels, with undo, clear, hints, and an optional reference map. No dragging is required. Planet names/order and the star/dwarf-planet distinction were checked against NASA: https://science.nasa.gov/solar-system/planets/ and https://science.nasa.gov/solar-system/planets/planet-sizes-and-locations-in-our-solar-system/. Illustrations explicitly show neither real scale nor current positions.
