@@ -47,6 +47,8 @@ Set BILLING_MODE=live only when all of those values and checks pass. The ready c
 
 ## Deployment
 
+The preserved chat handler is CommonJS. Keep the root package free of `type: module`; Node 24 detects ESM syntax for new modules while retaining CommonJS for the legacy handler. The runtime-compatibility test covers both formats.
+
 **Do not deploy only the Git checkout.** api/chat.js is still preserved by uploaded-file SHA in deployment-preserved-files.json. Include that exact file reference plus public HTML/CSS/JS, lib/billing.js, api/billing.js, api/stripe-webhook.js, middleware.js, package.json and package-lock.json. Do not expose server helper source as a static public asset: Vercel's output should contain only static public files plus compiled functions/middleware. Verify the chat file SHA and endpoint after deployment.
 
 Run `npm test` and `npm run verify`. These verify access rules, price validation, server auth, duplicate checkout handling, webhook signatures, async payment handling, replay reconciliation, and configuration failure behavior. They are not a substitute for the signed-in Stripe sandbox journey described above.

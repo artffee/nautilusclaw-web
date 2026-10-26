@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {Readable} from 'node:stream';
+import {createRequire} from 'node:module';
 import Stripe from 'stripe';
 import {config, requireReady, authenticate, checkOrigin, catalog, findCustomer, evaluateSubscriptions, createCheckout, reconcileEvent} from '../lib/billing.js';
 import webhook from '../api/stripe-webhook.js';
@@ -133,4 +134,11 @@ test('enabled chat subscription gate denies missing authentication even when Str
   const old=process.env.BILLING_MODE;process.env.BILLING_MODE='test';
   try {const res=await middleware(new Request(cfg.origin+'/api/chat',{method:'POST'}));assert.equal(res.status,401);}
   finally {if(old===undefined)delete process.env.BILLING_MODE;else process.env.BILLING_MODE=old;}
+});
+
+test('new ESM billing modules coexist with the legacy CommonJS handler', () => {
+  const require = createRequire(import.meta.url);
+  const legacy = require('./fixtures/legacy-handler.js');
+  const res = response();legacy({method:'GET'},res);
+  assert.equal(res.statusCode,405);
 });
