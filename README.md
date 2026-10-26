@@ -1,71 +1,33 @@
 # NautilusClaw Kids
 
-A voice-first AI learning companion for children ages 3–12. Free forever, local-first, GDPR-ready.
+Live: https://nautilusclaw-app.vercel.app/
 
-> 🪼 Live: **[nautilusclaw.vercel.app](https://nautilusclaw.vercel.app)**
+## October 26, 2026 update
 
-## What's in here
+- A responsive cream, coral and ocean-green homepage with explicit pricing and availability.
+- `/adventure`: a complete written ocean expedition with ages 3–5, 6–8 and 9–12, gentle hints, story choices, optional browser read-aloud, an offline activity and print support.
+- `/parent-preview`: clearly labeled sample or an explicitly saved device-only guest recap. It loads no account SDK and sends no adventure choices to an AI provider.
+- `/parent`: existing Supabase parent accounts, actual saved message counts and conversations, exports, printing, and confirmed clearing of learning data. No invented emotion graphs or development scores.
+- `/guide`: factual privacy, safety, beta terms and availability information. No certification or press-endorsement claims.
+- `/app`: preserved chat beta, with its obsolete API-key form replaced by accurate server-connection status and labeled sample replies.
 
-Three single-file static pages plus a shared auth module — no build step, no backend, deployable to any static host.
+## Production source recovery
 
-| File | Purpose |
-| --- | --- |
-| `index.html` | Marketing site (`/`) — editorial hero, age groups, mobile mockup, parent dashboard preview, pricing, voices |
-| `app.html` | Kid app (`/app`) — voice chat with Nautilus, Stories, Puzzles, Growth tabs |
-| `parent.html` | Parent dashboard (`/parent`) — emotion timeline, mood journal, full chat audit, art history, settings |
-| `auth.js` | Shared client-side auth (localStorage + SHA-256 salted hashes, sign-in modal injection, user pill) |
-| `vercel.json` | Clean URLs, security headers (`Permissions-Policy: microphone=(self)` for the voice app) |
+The live Vercel deployment contained newer Supabase authentication, password recovery and server-based chat code than the previous GitHub main branch. The current frontend was recovered from the live deployment before these edits.
 
-## Features
+The existing `api/chat.js` server function must be retained by its Vercel file SHA in `deployment-preserved-files.json`. The available source retrieval tool truncated the server file; this repository therefore does not yet contain its full source. Do not deploy just the repository's files or replace that function with a stub. Create a deployment with the frontend files plus the preserved uploaded-file reference. Existing project environment variables remain on Vercel.
 
-- **Real Claude integration** — BYO Anthropic API key (Haiku 4.5 / Sonnet 4.6 / Opus 4.7). Falls back to canned demo replies for visitors without a key.
-- **Age-aware system prompts** — three calibrated personas for ages 3–5, 6–8, 9–12 (per [spec §3.2](#))
-- **Crisis detection** — 15 trigger phrases scanned client-side before the LLM call. Triggers a calm full-screen overlay with localized helplines (EU 116 111, UK 0800 1111, US 988, BG 116 111).
-- **Parallel emotion analysis** — every utterance gets a separate 8-token Claude call to tag emotion (`happy/excited/curious/playful/sad/frustrated/worried/neutral`), surfaced in the parent dashboard
-- **Wellbeing trend tracking** — 3 negative emotions in a row logs a private parent note
-- **Voice input** — Web Speech API where supported, type-fallback elsewhere
-- **PWA-friendly** — installable, offline-tolerant
-- **Auth** — client-side sign up / sign in. Salted SHA-256 hashes via `crypto.subtle`. Cross-tab sync via `storage` event. Account-scoped state (kid profile, progress, history).
-- **GDPR Article 17** — one-click "Erase all data" deletes the entire account record
+`supabase-config.js` contains the existing public anonymous client configuration; server secrets are not part of this checkout. No database schema changes were made by this update. Existing Supabase policies and the signed-in production flow still require separate end-to-end verification with a test parent account.
 
-## Local dev
+## Checks
 
-It's static HTML — there's nothing to install. Just serve the folder:
-
-```bash
-npx serve .
-# or
-python -m http.server 3000
+```sh
+python scripts/verify.py
+node --test tests/auth-clear.test.cjs
 ```
 
-Open `http://localhost:3000`. The Anthropic API uses `anthropic-dangerous-direct-browser-access` for direct browser calls, so the BYO-key flow works locally as well.
+Browser QA: complete guest journey, incorrect/correct answer feedback, story choices, opt-in recap saving and retrieval, distinct sample labeling, and phone-width layouts. Clearing account data is covered with success/failure database mocks; no real account data was erased during testing.
 
-## Deploy
+## Boundaries
 
-Vercel:
-
-```bash
-vercel --prod
-```
-
-Any static host works — `vercel.json` is the only Vercel-specific file (and is harmless on others).
-
-## Tech stack
-
-- Vanilla HTML / CSS / JS
-- Fonts: Fraunces (display) + Instrument Sans (body) + JetBrains Mono (code)
-- No frameworks. No build step. No transpiler.
-- Anthropic Messages API (browser-direct via `anthropic-dangerous-direct-browser-access`)
-- Web Speech API for voice input
-- localStorage + SubtleCrypto for client-side auth
-
-## Roadmap
-
-- Real backend (Node + SQLite per [spec §4](#)) for cross-device sync
-- Stripe Checkout for optional Premium support tier
-- Capacitor wrappers for iOS / Android binaries
-- Open-source the safety filters once formal review is complete
-
-## License
-
-MIT (pending a final license file). Built by parents who think kids should learn to wonder for free.
+This is an educational beta. The guest adventure is written content, not generative AI. Cloud AI availability, provider processing, browser speech behavior, and parent account storage are disclosed. There is no native app-store release, paid plan, medical monitoring, or guaranteed parent-alert service offered in this update.

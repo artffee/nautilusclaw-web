@@ -10,6 +10,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,300..900,0..100;1,9..144,300..900,0..100&family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/supabase-config.js"></script>
 <script src="/auth.js"></script>
 <style>
   /* =========================================================
@@ -1534,7 +1536,7 @@
       align-content: start;
     }
     .tabbar::after {
-      content: "Nautilus is real when you connect Claude → ⚙";
+      content: "AI can make mistakes. Explore with a grown-up.";
       grid-column: 1;
       align-self: end;
       padding: 16px 12px 0;
@@ -1685,21 +1687,21 @@
       <circle cx="32" cy="32" r="10" stroke="currentColor" stroke-width="2" opacity="0.4"/>
       <circle cx="32" cy="32" r="3" fill="currentColor"/>
     </svg>
-    <div class="gate-eyebrow">Free forever · Voice-first · Ages 3–12</div>
+    <div class="gate-eyebrow">Chat beta · Ages 3–12 · Explore with a grown-up</div>
     <h1>Hi, I'm <em>Nautilus.</em><br>Let's talk.</h1>
-    <p class="gate-sub">Create a free account so your child's progress, conversations, and stories stay safely in your browser. No card. No paywall. No ads.</p>
-    <div class="gate-cta-row">
+    <p class="gate-sub">A parent account saves your profile and chat activity through Supabase. For an instant start, try our free guided ocean adventure—no account needed.</p>
+    <p><a class="gate-btn primary" href="/adventure" style="display:inline-block;text-decoration:none">Try the ocean adventure →</a></p><div class="gate-cta-row">
       <button class="gate-btn primary" id="gateSignUp">Create a free account</button>
       <button class="gate-btn secondary" id="gateSignIn">I already have one</button>
     </div>
     <div class="gate-foot">
-      <span>Local-first</span>
-      <span>GDPR ready</span>
-      <span>EU AI Act</span>
+      <span>Parent account</span>
+      <span>Cloud-backed progress</span>
+      <a href="/guide#privacy">Privacy information</a>
       <span>No ads, ever</span>
     </div>
     <div class="marketing-link">
-      <a href="/">← Back to nautilusclaw.ai</a>
+      <a href="/">← Back to NautilusClaw</a>
     </div>
   </div>
 
@@ -1707,10 +1709,10 @@
   <div class="onboard" id="onboard">
     <div class="step-label">Welcome aboard</div>
     <h1>Hi, I'm <em>Nautilus.</em></h1>
-    <p class="intro">Let's set up your little explorer. This stays on your device — nothing is sent to the cloud unless you choose.</p>
+    <p class="intro">Grown-up: choose a nickname and age band. This profile and chat activity are saved to your account. Avoid real names or other private details.</p>
 
-    <div class="step-label">What's your name?</div>
-    <input type="text" class="name-input" id="kidName" placeholder="Type your name…" maxlength="20" />
+    <div class="step-label">Choose a nickname</div>
+    <input type="text" class="name-input" id="kidName" placeholder="Choose a nickname…" maxlength="20" />
 
     <div class="step-label">How old are you?</div>
     <div class="age-options" id="ageGroup">
@@ -1738,7 +1740,7 @@
     </div>
 
     <button class="start-btn" id="startBtn" disabled>Begin →</button>
-    <div class="legal-line">Local-first · GDPR · EU AI Act</div>
+    <div class="legal-line">Parent-supervised beta · Cloud-backed account</div>
   </div>
 
   <!-- ===== App ===== -->
@@ -1758,7 +1760,7 @@
           <span class="ico">★</span>
           <span id="xpHeader">0 XP</span>
         </div>
-        <button class="settings-btn" id="settingsBtn" aria-label="Connect Claude API" title="Connect Claude API (parents)">
+        <button class="settings-btn" id="settingsBtn" aria-label="About the chat connection" title="About the chat connection">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
             <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
             <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06A1.65 1.65 0 0 0 15 19.4a1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06A2 2 0 1 1 4.29 16.96l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9c.18.42.27.87.27 1.32V11a2 2 0 0 1 0 2v.68c0 .45-.09.9-.27 1.32z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
@@ -1774,8 +1776,8 @@
       <!-- ============== CHAT PAGE ============== -->
       <div class="page" data-page="chat">
         <div class="demo-banner" id="demoBanner">
-          <span>🪄 <strong>Demo mode</strong> — replies are pre-written. Connect Claude for the real Nautilus.</span>
-          <button id="demoBannerCta">Connect</button>
+          <span id="connectionLabel">Chat beta · Connection checked when you send a message.</span>
+          <button id="demoBannerCta">About chat</button>
         </div>
         <div class="chat-list" id="chatList">
           <div class="chat-day">Today · just now</div>
@@ -1784,7 +1786,7 @@
             Hi <span id="kidNameInline">friend</span>! I'm Nautilus. I love stories, jokes, and big questions. What should we talk about first?
           </div>
         </div>
-        <div class="chips" id="chips">
+        <div class="chips" id="chips"><a href="/adventure" style="padding:8px 14px;color:var(--ink);font-size:13px">🌊 Try the ocean adventure</a>
           <button class="chip" data-suggest="Tell me a fun fact">✨ Tell me a fun fact</button>
           <button class="chip" data-suggest="Why is the sky blue?">🌤 Why is the sky blue?</button>
           <button class="chip" data-suggest="Tell me a joke">🃏 Tell me a joke</button>
@@ -2091,34 +2093,9 @@
     <div class="game-board" id="gameBoard"></div>
   </div>
 
-  <!-- ===== Settings (API key) modal ===== -->
-  <div class="modal-backdrop" id="settingsBackdrop" role="dialog" aria-modal="true">
-    <div class="modal">
-      <div class="modal-head">
-        <h3>Connect Claude</h3>
-        <button class="modal-close" id="closeSettings" aria-label="Close">×</button>
-      </div>
-      <div class="modal-body">
-        <p>Right now Nautilus uses pre-written demo replies. Add your Anthropic API key to talk to the real, age-aware Claude.</p>
-        <p class="muted">Your key stays in this browser only. It's never sent to our servers. Get one at <a href="https://console.anthropic.com" target="_blank" rel="noopener">console.anthropic.com</a>.</p>
-
-        <label class="input-label" for="apiKeyInput">Anthropic API key</label>
-        <input type="password" class="text-input" id="apiKeyInput" placeholder="sk-ant-api03-..." autocomplete="off" spellcheck="false" />
-        <div class="api-status" id="apiStatus"></div>
-
-        <label class="input-label" for="modelSelect">Model</label>
-        <select class="text-input" id="modelSelect">
-          <option value="claude-haiku-4-5">Haiku 4.5 — fast &amp; cheap (recommended for kids)</option>
-          <option value="claude-sonnet-4-6">Sonnet 4.6 — smarter, more expensive</option>
-          <option value="claude-opus-4-7">Opus 4.7 — most capable, premium pricing</option>
-        </select>
-      </div>
-      <div class="modal-foot">
-        <button class="btn-modal-danger" id="clearKeyBtn">Clear</button>
-        <button class="btn-ghost" id="testKeyBtn">Test</button>
-        <button class="btn-modal-primary" id="saveKeyBtn">Save</button>
-      </div>
-    </div>
+  <div class="modal-backdrop" id="settingsBackdrop" role="dialog" aria-modal="true" aria-labelledby="connectionTitle">
+    <div class="modal"><div class="modal-head"><h3 id="connectionTitle">About the chat connection</h3><button class="modal-close" id="closeSettings" aria-label="Close">×</button></div>
+    <div class="modal-body"><p>Parents do not need an API key. The chat uses this site's server connection when it is available.</p><p id="apiStatus" role="status">The connection has not been checked yet.</p><p>Written sample replies are labeled when live AI is unavailable. AI replies may be wrong. Profiles and chat history are saved to your cloud-backed account.</p><p><a href="/guide#privacy">Read privacy information</a> · <a href="/adventure">Try the guided adventure</a></p></div><div class="modal-foot"><button class="btn-modal-primary" id="saveKeyBtn">Done</button></div></div>
   </div>
 
   <!-- ===== Crisis overlay ===== -->
@@ -2444,14 +2421,8 @@ function nautilusReply(text) {
    Real Claude API integration
    ============================================================ */
 
-const API_KEY_STORAGE   = 'nautilusclaw-api-key';
-const API_MODEL_STORAGE = 'nautilusclaw-api-model';
-const CONCERNS_STORAGE  = 'nautilusclaw-concerns';
-
-function getApiKey() { return localStorage.getItem(API_KEY_STORAGE) || ''; }
-function getModel()  { return localStorage.getItem(API_MODEL_STORAGE) || 'claude-haiku-4-5'; }
-function setApiKey(k){ if (k) localStorage.setItem(API_KEY_STORAGE, k); else localStorage.removeItem(API_KEY_STORAGE); }
-function setModel(m) { localStorage.setItem(API_MODEL_STORAGE, m); }
+const CONCERNS_STORAGE = 'nautilusclaw-concerns';
+function getModel() { return 'claude-haiku-4-5'; }
 
 /* === Crisis detection (15 trigger phrases per spec section 3.1) === */
 const CRISIS_KEYWORDS = [
@@ -2465,10 +2436,11 @@ function checkCrisis(text) {
   return CRISIS_KEYWORDS.find(k => t.includes(k)) || null;
 }
 function logConcern(text, trigger, type = 'crisis') {
-  let concerns = [];
-  try { concerns = JSON.parse(localStorage.getItem(CONCERNS_STORAGE) || '[]'); } catch {}
+  const user = window.NautilusAuth?.currentUser();
+  if (!user) return;
+  const concerns = Array.isArray(user.concerns) ? user.concerns.slice() : [];
   concerns.push({ text, trigger, type, t: Date.now(), name: state.name, age: state.age });
-  localStorage.setItem(CONCERNS_STORAGE, JSON.stringify(concerns));
+  NautilusAuth.updateCurrentUser({ concerns });
 }
 
 /* === Age-aware system prompts (spec section 3.2) === */
@@ -2525,36 +2497,35 @@ function buildApiMessages(history) {
   return out;
 }
 
-async function callClaude(systemPrompt, messages, maxTokens = 350, modelOverride = null) {
-  const apiKey = getApiKey();
-  if (!apiKey) throw new Error('NO_API_KEY');
-  const r = await fetch('https://api.anthropic.com/v1/messages', {
+/* === Secure proxy call — the Anthropic key lives on the server, never here === */
+async function callProxy(systemPrompt, messages, maxTokens = 350, opts = {}) {
+  const token = (window.NautilusAuth && NautilusAuth.getToken && NautilusAuth.getToken()) || '';
+  const headers = { 'content-type': 'application/json' };
+  if (token) headers['authorization'] = 'Bearer ' + token;
+  const r = await fetch('/api/chat', {
     method: 'POST',
-    headers: {
-      'content-type': 'application/json',
-      'x-api-key': apiKey,
-      'anthropic-version': '2023-06-01',
-      'anthropic-dangerous-direct-browser-access': 'true',
-    },
+    headers,
     body: JSON.stringify({
-      model: modelOverride || getModel(),
-      max_tokens: maxTokens,
-      system: [
-        { type: 'text', text: systemPrompt, cache_control: { type: 'ephemeral' } }
-      ],
+      system: systemPrompt,
       messages,
+      max_tokens: maxTokens,
+      model: getModel(),
+      moderate: !!opts.moderate,
+      moderateText: opts.moderateText || '',
     }),
   });
-  if (!r.ok) {
-    let msg = `Claude API ${r.status}`;
-    try {
-      const err = await r.json();
-      msg = err.error?.message || msg;
-    } catch {}
-    throw new Error(msg);
-  }
+  // No backend (404) or not signed in / token expired (401) -> use demo replies.
+  if (r.status === 404 || r.status === 401) { const e = new Error('NOT_CONFIGURED'); e.code = 'NOT_CONFIGURED'; throw e; }
+  if (!r.ok) throw new Error(`Proxy ${r.status}`);
   const data = await r.json();
-  return (data.content?.[0]?.text || '').trim();
+  // Server has no ANTHROPIC_API_KEY set -> caller should fall back to demo replies.
+  if (data.configured === false) { const e = new Error('NOT_CONFIGURED'); e.code = 'NOT_CONFIGURED'; throw e; }
+  return data; // { text } | { blocked, category } | { text, flagged, category, severity }
+}
+
+async function callClaude(systemPrompt, messages, maxTokens = 350) {
+  const data = await callProxy(systemPrompt, messages, maxTokens);
+  return (data.text || '').trim();
 }
 
 async function realNautilusReply(text) {
@@ -2566,15 +2537,19 @@ async function realNautilusReply(text) {
 
   const sys = getSystemPrompt(state.age || '6-8');
 
-  // Run main reply + emotion analysis in parallel (spec 3.1)
-  const [replyText, emoRaw] = await Promise.all([
-    callClaude(sys, apiMessages, 350),
+  // Run main reply (with server-side safety moderation) + emotion analysis in parallel (spec 3.1)
+  const [main, emoRaw] = await Promise.all([
+    callProxy(sys, apiMessages, 350, { moderate: true, moderateText: text }),
     callClaude(EMOTION_PROMPT, [{ role: 'user', content: text }], 8),
   ]);
+
+  // Server-side moderation stopped this turn — signal the caller to show support.
+  if (main.blocked) return { blocked: true, category: main.category };
+
   const emo = (emoRaw || '').toLowerCase().replace(/[^a-z]/g, '').trim() || 'neutral';
   const validEmotions = ['happy','excited','curious','playful','sad','frustrated','worried','neutral'];
   const cleanEmo = validEmotions.includes(emo) ? emo : 'neutral';
-  return { text: replyText, emo: cleanEmo };
+  return { text: main.text, emo: cleanEmo, flagged: main.flagged, category: main.category, severity: main.severity };
 }
 
 /* === Wellbeing trend tracking — 3 negative emotions in a row triggers a parent note === */
@@ -2584,7 +2559,7 @@ function trackEmotionStreak(emo) {
   if (NEG.includes(emo)) {
     state._negStreak++;
     if (state._negStreak >= 3) {
-      logConcern('3 consecutive negative emotions detected', 'wellbeing-streak', 'wellbeing');
+      logConcern('Automated tone labels repeated; review the conversation for context', 'wellbeing-streak', 'wellbeing');
       state._negStreak = 0;
       // gentle UI hint — toast for the parent (kid won't notice)
     }
@@ -2620,18 +2595,39 @@ async function sendKid(text) {
   // === STEP 3: Real Claude OR demo fallback ===
   try {
     let r;
-    if (getApiKey()) {
+    try {
+      // Always try the secure server proxy first (real Claude, key stays server-side).
       r = await realNautilusReply(text);
-    } else {
-      // Demo mode — simulated delay so the typing indicator feels real
-      await new Promise(res => setTimeout(res, 700 + Math.random() * 600));
-      r = nautilusReply(text);
+      setConnectionState("live");
+    } catch (e) {
+      if (e.code === 'NOT_CONFIGURED') {
+        // No server AI configured yet — fall back to built-in demo replies.
+        await new Promise(res => setTimeout(res, 700 + Math.random() * 600));
+        r = nautilusReply(text);
+        r.sample = true;
+        setConnectionState("sample");
+      } else {
+        throw e;
+      }
     }
+
+    // Server-side safety layer caught something serious — calm support + parent log.
+    if (r && r.blocked) {
+      typing.remove();
+      logConcern(text, 'moderation:' + (r.category || 'flagged'), 'moderation');
+      showCrisis();
+      return;
+    }
+    // Non-blocking safety flag — quietly record a parent concern, still reply warmly.
+    if (r && r.flagged) {
+      logConcern(text, 'moderation:' + (r.category || 'flagged') + ' (' + (r.severity || '') + ')', 'moderation');
+    }
+
     typing.remove();
     appendMsg('naut',
-      `<span class="emo ${r.emo}">${r.emo}</span><br>${escapeHTML(r.text)}`
+      `${r.sample ? '<span class="emo curious">Written sample reply</span><br>' : '<span class="emo curious">AI reply</span><br>'}${escapeHTML(r.text)}`
     );
-    state.history.push({ role: 'naut', text: r.text, t: Date.now(), emo: r.emo });
+    state.history.push({ role: 'naut', text: r.text, t: Date.now(), emo: r.emo, sample: !!r.sample });
     state.xp += 5;
     trackEmotionStreak(r.emo);
     saveState();
@@ -2640,9 +2636,8 @@ async function sendKid(text) {
   } catch (e) {
     typing.remove();
     console.error('[Nautilus]', e);
-    const friendly = (e.message || '').includes('NO_API_KEY')
-      ? "I'm not connected yet. Tap the gear icon to set me up!"
-      : `Hmm, my connection hiccupped. Try again? (${(e.message || 'unknown').slice(0, 60)})`;
+    setConnectionState('error');
+    const friendly = "My chat connection isn't ready right now. Please try again later, or explore the ocean adventure with a grown-up.";
     appendMsg('naut',
       `<span class="emo curious">curious</span><br>${escapeHTML(friendly)}`
     );
@@ -2846,102 +2841,26 @@ tickClock();
 setInterval(tickClock, 30000);
 
 /* ============================================================
-   Settings modal (BYO Claude API key)
+   Chat connection information
    ============================================================ */
-const settingsBtn       = document.getElementById('settingsBtn');
-const settingsBackdrop  = document.getElementById('settingsBackdrop');
-const closeSettingsBtn  = document.getElementById('closeSettings');
-const apiKeyInput       = document.getElementById('apiKeyInput');
-const modelSelectEl     = document.getElementById('modelSelect');
-const apiStatusEl       = document.getElementById('apiStatus');
-const testKeyBtn        = document.getElementById('testKeyBtn');
-const saveKeyBtn        = document.getElementById('saveKeyBtn');
-const clearKeyBtn       = document.getElementById('clearKeyBtn');
-const demoBanner        = document.getElementById('demoBanner');
-const demoBannerCta     = document.getElementById('demoBannerCta');
-
-function openSettings() {
-  apiKeyInput.value = getApiKey();
-  modelSelectEl.value = getModel();
-  apiStatusEl.textContent = '';
-  apiStatusEl.className = 'api-status';
-  settingsBackdrop.classList.add('open');
-  setTimeout(() => apiKeyInput.focus(), 200);
-}
-function closeSettings() {
-  settingsBackdrop.classList.remove('open');
-}
-settingsBtn.addEventListener('click', openSettings);
-closeSettingsBtn.addEventListener('click', closeSettings);
-demoBannerCta.addEventListener('click', openSettings);
-settingsBackdrop.addEventListener('click', (e) => {
-  if (e.target === settingsBackdrop) closeSettings();
-});
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape' && settingsBackdrop.classList.contains('open')) closeSettings();
-});
-
-testKeyBtn.addEventListener('click', async () => {
-  const key = apiKeyInput.value.trim();
-  if (!key) {
-    apiStatusEl.textContent = 'Enter a key first.';
-    apiStatusEl.className = 'api-status err';
-    return;
-  }
-  apiStatusEl.textContent = 'Testing key…';
-  apiStatusEl.className = 'api-status pending';
-  // Save temporarily so callClaude reads it
-  const prevKey = getApiKey();
-  const prevModel = getModel();
-  setApiKey(key);
-  setModel(modelSelectEl.value);
-  try {
-    const reply = await callClaude(
-      'You are a helper. Reply with exactly the word OK.',
-      [{ role: 'user', content: 'ping' }],
-      8
-    );
-    apiStatusEl.textContent = '✓ Key works! Reply: ' + (reply || '').slice(0, 40);
-    apiStatusEl.className = 'api-status ok';
-  } catch (e) {
-    apiStatusEl.textContent = '✗ ' + (e.message || 'Could not connect').slice(0, 100);
-    apiStatusEl.className = 'api-status err';
-    // restore previous key on failure
-    setApiKey(prevKey);
-    setModel(prevModel);
-  }
-  refreshApiStatus();
-});
-
-saveKeyBtn.addEventListener('click', () => {
-  const key = apiKeyInput.value.trim();
-  setApiKey(key);
-  setModel(modelSelectEl.value);
-  refreshApiStatus();
-  if (key) {
-    showToast('✓', 'Real Nautilus connected!');
-  } else {
-    showToast('Saved', 'Back to demo mode');
-  }
-  closeSettings();
-});
-
-clearKeyBtn.addEventListener('click', () => {
-  setApiKey('');
-  apiKeyInput.value = '';
-  apiStatusEl.textContent = 'Cleared. Back to demo mode.';
-  apiStatusEl.className = 'api-status';
-  refreshApiStatus();
-});
-
+const settingsBtn = document.getElementById('settingsBtn');
+const settingsBackdrop = document.getElementById('settingsBackdrop');
+let connectionState = 'unknown';
+function setConnectionState(value) { connectionState = value; refreshApiStatus(); }
 function refreshApiStatus() {
-  const hasKey = !!getApiKey();
-  settingsBtn.classList.toggle('live', hasKey);
-  if (demoBanner) demoBanner.classList.toggle('hidden', hasKey);
-  settingsBtn.setAttribute('title', hasKey
-    ? 'Connected to Claude · click to manage'
-    : 'Connect Claude API (parents)');
+  const text = { unknown: 'Chat beta · Connection checked when you send a message.', live: 'AI connection available · Replies may be inaccurate.', sample: 'Sample mode · Replies are pre-written. Live AI is unavailable.', error: 'Chat connection unavailable. Try the guided adventure.' }[connectionState];
+  document.getElementById('connectionLabel').textContent = text;
+  document.getElementById('apiStatus').textContent = text;
+  settingsBtn.classList.toggle('live', connectionState === 'live');
 }
+function openSettings(){refreshApiStatus();settingsBackdrop.classList.add('open');document.getElementById('closeSettings').focus();}
+function closeSettings(){settingsBackdrop.classList.remove('open');settingsBtn.focus();}
+settingsBtn.addEventListener('click',openSettings);
+document.getElementById('closeSettings').addEventListener('click',closeSettings);
+document.getElementById('saveKeyBtn').addEventListener('click',closeSettings);
+document.getElementById('demoBannerCta').addEventListener('click',openSettings);
+settingsBackdrop.addEventListener('click',e=>{if(e.target===settingsBackdrop)closeSettings();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&settingsBackdrop.classList.contains('open'))closeSettings();});
 
 /* ============================================================
    Crisis overlay
