@@ -59,3 +59,10 @@ with an upstream connection failure; this does not establish a provider outage.
 The generated vendor SDK and temporary responsive QA pages are not source files.
 The deployed legacy `api/chat.js` must continue to be preserved by Vercel upload
 reference `c3a0201c3460299c01bab11feb5c563779c3a8a6`.
+
+## Release
+
+Production deployment `dpl_91vesUucr7EDzcDSwEpqXZGsMgkk` is READY, based on
+commit `f9b3551451fc5b457e9336effbd691537cacc26b`. The login is available at
+https://nautilusclaw.com/login and https://nautilusclaw-app.vercel.app/login.
+The original chat upload is preserved.
