@@ -37,3 +37,8 @@ This is an educational beta. The guest adventure is written content, not generat
 See [BILLING_SETUP.md](BILLING_SETUP.md) for exact sandbox resources, server key requirements, activation steps, and validation limits. New `/pricing` and `/billing` pages show $6.99/month or $59/year with clear renewal and cancellation details. Hosted Stripe Checkout, parent-owned customer portal, signed lifecycle webhooks, and server-side subscription verification are implemented. No live payments were enabled. `npm test`, `npm run verify`, and `npm run build` cover this release.
 
 Only explicitly allowed public assets are copied to `dist`; server helpers and configuration secrets stay outside the static output. Preserve the existing uploaded `api/chat.js` file when deploying.
+
+
+## Free learning games
+
+`/learn` offers Math reef, an A–Z Alphabet garden, Letter detective / Word builder, and Pattern lagoon. Three age-guide levels change the puzzles. Five-puzzle rounds give hints and a clear ending; the alphabet can be explored freely. Game state stays in memory, with no accounts, analytics, or saved scores. Read-aloud is optional and uses browser speech. The production address is https://nautilusclaw.com.
