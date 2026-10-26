@@ -2516,6 +2516,7 @@ async function callProxy(systemPrompt, messages, maxTokens = 350, opts = {}) {
   });
   // No backend (404) or not signed in / token expired (401) -> use demo replies.
   if (r.status === 404 || r.status === 401) { const e = new Error('NOT_CONFIGURED'); e.code = 'NOT_CONFIGURED'; throw e; }
+  if (r.status === 402) { const e = new Error('Family access requires parent review'); e.code = 'SUBSCRIPTION_REQUIRED'; throw e; }
   if (!r.ok) throw new Error(`Proxy ${r.status}`);
   const data = await r.json();
   // Server has no ANTHROPIC_API_KEY set -> caller should fall back to demo replies.
@@ -2637,7 +2638,7 @@ async function sendKid(text) {
     typing.remove();
     console.error('[Nautilus]', e);
     setConnectionState('error');
-    const friendly = "My chat connection isn't ready right now. Please try again later, or explore the ocean adventure with a grown-up.";
+    const friendly = e.code === 'SUBSCRIPTION_REQUIRED' ? "Please ask your grown-up to check Family access in the parent area. We can still explore the free ocean adventure together." : "My chat connection isn't ready right now. Please try again later, or explore the ocean adventure with a grown-up.";
     appendMsg('naut',
       `<span class="emo curious">curious</span><br>${escapeHTML(friendly)}`
     );

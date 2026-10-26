@@ -30,4 +30,10 @@ Browser QA: complete guest journey, incorrect/correct answer feedback, story cho
 
 ## Boundaries
 
-This is an educational beta. The guest adventure is written content, not generative AI. Cloud AI availability, provider processing, browser speech behavior, and parent account storage are disclosed. There is no native app-store release, paid plan, medical monitoring, or guaranteed parent-alert service offered in this update.
+This is an educational beta. The guest adventure is written content, not generative AI. Cloud AI availability, provider processing, browser speech behavior, and parent account storage are disclosed. There is no native app-store release, medical monitoring, or guaranteed parent-alert service. The Family subscription integration is prepared; checkout stays disabled until server credentials and the complete Stripe sandbox journey are verified.
+
+## Family billing update
+
+See [BILLING_SETUP.md](BILLING_SETUP.md) for exact sandbox resources, server key requirements, activation steps, and validation limits. New `/pricing` and `/billing` pages show $6.99/month or $59/year with clear renewal and cancellation details. Hosted Stripe Checkout, parent-owned customer portal, signed lifecycle webhooks, and server-side subscription verification are implemented. No live payments were enabled. `npm test`, `npm run verify`, and `npm run build` cover this release.
+
+Only explicitly allowed public assets are copied to `dist`; server helpers and configuration secrets stay outside the static output. Preserve the existing uploaded `api/chat.js` file when deploying.

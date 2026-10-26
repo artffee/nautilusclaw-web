@@ -21,7 +21,8 @@ for name,page in pages.items():
   if not target.suffix:target=target.with_suffix('.html')
   assert target.exists(),f'{name}: missing {link}'
   if u.fragment and target.name in pages:assert u.fragment in pages[target.name].ids,f'{name}: missing anchor {link}'
-for p in root.glob('*.js'):subprocess.run(['node','--check',str(p)],check=True)
+for folder in [root,root/'api',root/'lib',root/'scripts']:
+ for p in list(folder.glob('*.js'))+list(folder.glob('*.mjs')):subprocess.run(['node','--check',str(p)],check=True)
 for p in root.glob('*.html'):
  for code in re.findall(r'<script(?:\s[^>]*)?>(.*?)</script>',p.read_text(),re.S):
   if not code.strip():continue
