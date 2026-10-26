@@ -87,3 +87,19 @@ learning remains available. No account records or credentials were submitted.
 Live login headers confirmed CSP, no-store, no-referrer, DENY framing, and
 camera/microphone/location disabled. The chat endpoint still returns its expected
 405 for GET; billing configuration returns 200.
+
+## Final release evidence
+
+Final production deployment `dpl_EU8n2bhGMUtRDNohVFwFddHUgTwz` is READY and
+serves commit `c01ce50f3e05e8d653e3966ffe516be325dd647d`. It preserves the
+original chat upload. Final mobile and desktop login audits after the outage
+state was published both remain 100 performance / 100 accessibility /
+100 best practices / 63 SEO (intentional noindex). Mobile measured at
+2026-10-26T22:57:44Z and desktop at 2026-10-26T22:58:45Z in workflow
+40415856218. Live browser checks confirm the disabled forms, visible outage
+message, working account-mode navigation, and no application console errors.
+The final 390px preview also fits without horizontal overflow.
+
+Next required action: add/connect the Supabase integration to inspect and restore
+the intended project, verify RLS with isolated test accounts and configure email
+redirects/password policy, then enable accounts and verify the complete flow.
