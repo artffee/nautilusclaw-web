@@ -87,3 +87,7 @@ so parents sign in again in a new browser tab. The old localStorage session is
 not reused and is removed on sign-out. No password is saved by this application.
 Recovery links can establish a session in a new tab; after a successful password
 change, this app signs that tab out and asks for a fresh sign-in.
+
+Current blocker: the configured project hostname returned ENOTFOUND from a hosted
+runner. Restore or connect the intended project, verify the settings and isolation
+above, then set `accountsEnabled: true` in `supabase-config.js` and redeploy.

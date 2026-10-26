@@ -19,7 +19,7 @@ Implemented October 26, 2026 for NautilusClaw Kids.
 
 ## Checks
 
-44 unit tests pass, including sign-out races, token clearing, guest isolation,
+45 unit tests pass, including sign-out races, token clearing, guest isolation,
 profile failures, generic errors, rate-limit messages, recovery gating, and
 redirect attacks. Build and static verification pass for 12 pages.
 
@@ -52,6 +52,7 @@ with an upstream connection failure; this does not establish a provider outage.
 - `scripts/build.mjs`
 - `scripts/verify.py`
 - `supabase/SETUP.md`
+- `supabase-config.js`
 - `tests/login-security.test.cjs`
 - `tests/login-routing.test.mjs`
 - `vercel.json`
@@ -66,3 +67,23 @@ Production deployment `dpl_91vesUucr7EDzcDSwEpqXZGsMgkk` is READY, based on
 commit `f9b3551451fc5b457e9336effbd691537cacc26b`. The login is available at
 https://nautilusclaw.com/login and https://nautilusclaw-app.vercel.app/login.
 The original chat upload is preserved.
+
+## Live checks and database blocker
+
+Lighthouse 13.5.0, run 40415856218: login mobile and desktop each scored
+100 performance, 100 accessibility, and 100 best practices. SEO is 63 because
+the account page intentionally opts out of indexing; guest discovery pages retain
+normal SEO. Home scored 100 in all four categories on both devices. Adventure
+scored 100 in all desktop categories; the mobile run measured performance 99 and
+100 for the other categories, with unchanged adventure assets.
+
+An independent GitHub-hosted API check returned ENOTFOUND for the configured
+Supabase project host on both Auth and REST routes. Real sign-in and database
+access are blocked, not verified. `accountsEnabled: false` now keeps the forms
+disabled with an honest unavailable message until the connected project is
+restored and its RLS, email redirects and password policy are verified. Guest
+learning remains available. No account records or credentials were submitted.
+
+Live login headers confirmed CSP, no-store, no-referrer, DENY framing, and
+camera/microphone/location disabled. The chat endpoint still returns its expected
+405 for GET; billing configuration returns 200.

@@ -3,6 +3,9 @@
  * protects the data. NEVER put the sb_secret_... key in client code.
  */
 window.SUPABASE_CONFIG = {
+  // Re-enable after the existing project is restored or a connected replacement is verified.
+  accountsEnabled: false,
   url: "https://zijjkbtxqjhnretrxawk.supabase.co",
   anonKey: "sb_publishable_1cMDNccUCG4-_ZdWhMd3QQ_NhWwLcaZ",
 };
+

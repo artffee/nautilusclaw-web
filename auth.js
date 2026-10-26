@@ -9,7 +9,7 @@
     removeItem(key) { try { global.sessionStorage.removeItem(key); } catch {} memory.delete(key); },
   };
   const storageKey = 'nautilus-parent-auth';
-  const sb = cfg && global.supabase && /^https:\/\//.test(cfg.url || '')
+  const sb = cfg && cfg.accountsEnabled !== false && global.supabase && /^https:\/\//.test(cfg.url || '')
     ? global.supabase.createClient(cfg.url, cfg.anonKey, {auth: {storage, storageKey, persistSession: true, detectSessionInUrl: true}}) : null;
   let _user = null, _uid = null, _token = null, _saveTimer = null, generation = 0, recovery = false, locallySignedOut = false;
   const listeners = new Set();
@@ -291,5 +291,5 @@
 
   global.NautilusAuth = {signup, signin, signout, requestReset, updatePassword, currentUser,
     updateCurrentUser, deleteCurrentUser, clearLearningData, getToken: () => _token,
-    isRecovery: () => recovery, ready, on, open, close, injectUI, renderUserPill};
+    isAvailable: () => !!sb, isRecovery: () => recovery, ready, on, open, close, injectUI, renderUserPill};
 })(window);

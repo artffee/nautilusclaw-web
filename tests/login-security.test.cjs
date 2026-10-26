@@ -58,3 +58,8 @@ test('password reset returns to the dedicated page and requires a recovery event
 test('auth events do not perform a synchronous database request inside the SDK lock',async()=>{
  const f=fixture();await f.auth.ready;f.emit('SIGNED_IN',session);assert.equal(f.auth.getToken(),null);await tick();assert.equal(f.auth.getToken(),session.access_token);
 });
+test('an explicitly disabled account service never initializes a database client',async()=>{
+ const window={SUPABASE_CONFIG:{url:'https://test.supabase.co',anonKey:'public-test',accountsEnabled:false},supabase:{createClient:()=>{throw new Error('Must not initialize');}}};
+ vm.runInNewContext(source,{window,console,URL,setTimeout,clearTimeout});await window.NautilusAuth.ready;
+ assert.equal(window.NautilusAuth.isAvailable(),false);await assert.rejects(window.NautilusAuth.signin({email:'qa@example.invalid',password:'test'}),/could not load/);
+});

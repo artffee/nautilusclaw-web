@@ -11,6 +11,12 @@ const copy = {
   reset: ['A fresh start.', 'Choose a new password for your parent account.', 'Update password'],
 };
 function message(text, error = false) { status.textContent = text; status.dataset.error = String(error); }
+function unavailable() {
+  if (window.SUPABASE_CONFIG?.accountsEnabled !== false) return false;
+  form.querySelectorAll('input,button').forEach(el => { el.disabled = true; });
+  message('Parent sign-in is temporarily unavailable while we reconnect the account service. You can still enjoy every free guest adventure.', true);
+  return true;
+}
 function showMode(value, focus = false) {
   mode = loginMode(value); const text = copy[mode];
   $('#formTitle').textContent = text[0]; $('#formIntro').textContent = text[1]; $('#submitText').textContent = text[2];
@@ -26,6 +32,7 @@ function showMode(value, focus = false) {
   if (mode === 'signup') { const a = document.createElement('a'); a.href='/guide#privacy'; a.textContent=' Privacy information →'; $('#accountDisclosure').append(a); }
   document.querySelectorAll('.form-tabs a').forEach(a => { if(a.dataset.mode === mode) a.setAttribute('aria-current','page'); else a.removeAttribute('aria-current'); });
   message(''); if(focus) $('#formTitle').focus();
+  if (unavailable()) return;
   if (mode === 'reset' && window.NautilusAuth && !NautilusAuth.isRecovery()) message('Open the password reset link in your email to choose a new password. You can request a fresh link under “Forgot password?”.',true);
 }
 function refreshAccount() {
@@ -60,6 +67,7 @@ form.addEventListener('submit', async e => {
 showMode(mode);
 // Defer scripts and this module have all completed before DOMContentLoaded.
 async function initialize() {
+  if (unavailable()) return;
   if(!window.NautilusAuth) { message('The account service could not load. Please reload this page. Guest adventures are still available.',true); return; }
   NautilusAuth.on(refreshAccount); await NautilusAuth.ready; refreshAccount();
   if (new URLSearchParams(location.hash.slice(1)).has('error_description')) {
