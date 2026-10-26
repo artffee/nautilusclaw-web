@@ -1,0 +1,57 @@
+name: Live Lighthouse checks
+on:
+  push:
+    branches: [improve-guest-adventure]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        device: [mobile, desktop]
+        page: [home, adventure]
+    steps:
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version: '24'
+      - name: Install the audit tool
+        run: npm install --prefix "$RUNNER_TEMP/lighthouse" lighthouse@13.5.0 --no-audit --no-fund
+      - name: Audit the deployed page
+        env:
+          DEVICE: ${{ matrix.device }}
+          PAGE: ${{ matrix.page }}
+        run: |
+          mkdir -p reports
+          PAGE_PATH="/"
+          if [ "$PAGE" = adventure ]; then PAGE_PATH="/adventure"; fi
+          PRESET=()
+          if [ "$DEVICE" = desktop ]; then PRESET=(--preset=desktop); fi
+          export CHROME_PATH="$(command -v google-chrome)"
+          node "$RUNNER_TEMP/lighthouse/node_modules/lighthouse/cli/index.js" "https://nautilusclaw-app.vercel.app$PAGE_PATH" \
+            --chrome-flags="--headless --no-sandbox" \
+            --only-categories=performance,accessibility,best-practices,seo \
+            --no-enable-error-reporting \
+            --output=json --output=html --output-path="reports/$PAGE-$DEVICE" "${PRESET[@]}"
+      - name: Show actual scores and findings
+        if: always()
+        run: |
+          node --input-type=module <<'JS'
+          import {readdirSync,readFileSync,appendFileSync} from 'node:fs';
+          for (const file of readdirSync('reports').filter(f=>f.endsWith('.json'))) {
+            const r=JSON.parse(readFileSync('reports/'+file));
+            const scores=Object.fromEntries(Object.entries(r.categories||{}).map(([k,v])=>[k,v.score===null?null:Math.round(v.score*100)]));
+            console.log('LIGHTHOUSE_RESULT',JSON.stringify({file,url:r.finalDisplayedUrl,time:r.fetchTime,version:r.lighthouseVersion,scores,runtimeError:r.runtimeError}));
+            for (const [id,a] of Object.entries(r.audits||{})) if (a.score!==null&&a.score<1) console.log('LIGHTHOUSE_FINDING',JSON.stringify({id,title:a.title,score:a.score,displayValue:a.displayValue,details:a.details?.items}));
+            appendFileSync(process.env.GITHUB_STEP_SUMMARY,`### ${file}\n\n\`\`\`json\n${JSON.stringify(scores,null,2)}\n\`\`\`\n`);
+          }
+          JS
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: always()
+        with:
+          name: lighthouse-${{ matrix.page }}-${{ matrix.device }}
+          path: reports/
+          retention-days: 14

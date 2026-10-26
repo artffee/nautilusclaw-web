@@ -1,7 +1,7 @@
 from pathlib import Path
 from html.parser import HTMLParser
 from urllib.parse import urlsplit
-import subprocess,re,tempfile
+import subprocess,re,tempfile,json
 root=Path(__file__).resolve().parents[1]
 class Page(HTMLParser):
  def __init__(self,text):
@@ -24,10 +24,13 @@ for name,page in pages.items():
 for folder in [root,root/'api',root/'lib',root/'scripts']:
  for p in list(folder.glob('*.js'))+list(folder.glob('*.mjs')):subprocess.run(['node','--check',str(p)],check=True)
 for p in root.glob('*.html'):
- for code in re.findall(r'<script(?:\s[^>]*)?>(.*?)</script>',p.read_text(),re.S):
+ for attrs,code in re.findall(r'<script(\s[^>]*)?>(.*?)</script>',p.read_text(),re.S):
+  if 'application/ld+json' in attrs:
+   json.loads(code);continue
   if not code.strip():continue
   with tempfile.NamedTemporaryFile(suffix='.js',mode='w') as f:
    f.write(code);f.flush();subprocess.run(['node','--check',f.name],check=True)
 for name in ['index.html','adventure.html','parent-preview.html','guide.html']:
  assert 'href="#"' not in (root/name).read_text(),f'{name}: placeholder link'
 print(f'PASS: {len(pages)} pages, internal destinations and anchors, JavaScript syntax, no placeholder links.')
+

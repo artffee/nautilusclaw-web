@@ -6,7 +6,7 @@ Live: https://nautilusclaw.com/
 
 - A responsive cream, coral and ocean-green homepage with explicit pricing and availability.
 - `/adventure`: a complete written ocean expedition with ages 3–5, 6–8 and 9–12, gentle hints, story choices, optional browser read-aloud, an offline activity and print support.
-- `/parent-preview`: clearly labeled sample or an explicitly saved device-only guest recap. It loads no account SDK and sends no adventure choices to an AI provider.
+- `/parent-preview`: illustrative sample only, never a personal record. `/recap` shows actual guest answers and story choices without an account SDK or network submission.
 - `/parent`: existing Supabase parent accounts, actual saved message counts and conversations, exports, printing, and confirmed clearing of learning data. No invented emotion graphs or development scores.
 - `/guide`: factual privacy, safety, beta terms and availability information. No certification or press-endorsement claims.
 - `/app`: preserved chat beta, with its obsolete API-key form replaced by accurate server-connection status and labeled sample replies.
@@ -52,3 +52,13 @@ Validate with `npm test`, `npm run verify`, and `npm run build`. Preserve the up
 ### Planet story
 
 `/stories?story=planets` tells Nia and the Planet Parade. A tap-to-order puzzle covers Mercury through Mars for ages 3–5 and all eight planets for the older levels, with undo, clear, hints, and an optional reference map. No dragging is required. Planet names/order and the star/dwarf-planet distinction were checked against NASA: https://science.nasa.gov/solar-system/planets/ and https://science.nasa.gov/solar-system/planets/planet-sizes-and-locations-in-our-solar-system/. Illustrations explicitly show neither real scale nor current positions.
+
+## Curious Reef recap and accessibility fixes
+
+- `reef-recap.mjs` shares the age-specific content, answer validation, story wording, storage validation and recap rendering between the adventure and `/recap`.
+- Completed session recaps use `sessionStorage` (`nautilus-reef-session-v2`). Permanent `localStorage` saving still requires the grown-up checkbox; legacy version-1 recaps remain readable with missing-answer details explicitly disclosed. Restarting clears current results without erasing a separately saved recap. Storage failures keep the recap readable and printable on the finish screen.
+- Actual camouflage attempts, counting attempts and displayed hints are included with age level, companion and place. Both Print recap controls use the personal recap; `/parent-preview` always remains a sample.
+- Counting progression stays hidden and locked until a correct answer. Returning to a solved question preserves its result. All companion/story combinations use appropriate articles.
+- Shared coral uses white text on #ba4129, with a darker #a93823 hover state. The existing pricing section now explicitly says guest learning is free, has no ads and needs no account.
+- Canonicals, Open Graph metadata, WebSite structured data, robots.txt and a sitemap improve search discovery. Personal/account recap pages stay noindex. No Google Analytics, tags, pixels, external analytics scripts, new accounts or server collection were added.
+- `npm test` covers answer attempts, hint counts, all companion/place combinations, fresh starts, legacy/malformed records, blocked storage, sample separation and contrast; `npm run verify` checks page destinations, anchors, JS and JSON-LD syntax.
