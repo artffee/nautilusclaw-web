@@ -62,3 +62,5 @@ Validate with `npm test`, `npm run verify`, and `npm run build`. Preserve the up
 - Shared coral uses white text on #ba4129, with a darker #a93823 hover state. The existing pricing section now explicitly says guest learning is free, has no ads and needs no account.
 - Canonicals, Open Graph metadata, WebSite structured data, robots.txt and a sitemap improve search discovery. Personal/account recap pages stay noindex. No Google Analytics, tags, pixels, external analytics scripts, new accounts or server collection were added.
 - `npm test` covers answer attempts, hint counts, all companion/place combinations, fresh starts, legacy/malformed records, blocked storage, sample separation and contrast; `npm run verify` checks page destinations, anchors, JS and JSON-LD syntax.
+
+Live before/after Lighthouse results, full guest-flow checks, changed files and verification limits are recorded in [docs/reef-recap-verification.md](docs/reef-recap-verification.md). Home billing work is deferred until pricing approaches the viewport; home CSS is inlined from the shared source during the build.
