@@ -142,3 +142,77 @@ test('new ESM billing modules coexist with the legacy CommonJS handler', () => {
   const res = response();legacy({method:'GET'},res);
   assert.equal(res.statusCode,405);
 });
+
+
+test('first annual checkout includes exactly seven free days and no upfront invoice items', async () => {
+  const {params} = await createCheckout(mockStripe(),cfg,user,'yearly',prices,true);
+  assert.equal(params.subscription_data.trial_period_days,7);
+  assert.equal(params.subscription_data.trial_settings.end_behavior.missing_payment_method,'cancel');
+  assert.equal(params.payment_method_collection,'always');
+  assert.equal(params.subscription_data.metadata.offer,'annual-7day-v1');
+  assert.equal(params.metadata.offer,'annual-7day-v1');
+  assert.equal(params.subscription_data.add_invoice_items,undefined);
+  assert.deepEqual(params.line_items,[{price:'price_yearly',quantity:1}]);
+  assert.match(params.custom_text.submit.message,/After 7 days, \$59\/year/);
+  const monthly=await createCheckout(mockStripe(),cfg,user,'monthly',prices,false);
+  assert.equal(monthly.params.subscription_data.trial_period_days,undefined);
+  await assert.rejects(createCheckout(mockStripe(),cfg,user,'monthly',prices,true),e=>e.status===400);
+});
+
+test('returning Family subscribers cannot repeat a trial or be silently charged by a trial CTA', async () => {
+  const previous={...paid,status:'canceled'};
+  assert.equal(evaluateSubscriptions([previous],prices).trialEligible,false);
+  const stripe=mockStripe([previous]);
+  await assert.rejects(createCheckout(stripe,cfg,user,'yearly',prices,true),e=>e.code==='TRIAL_ELIGIBILITY_CHANGED');
+  const result=await createCheckout(stripe,cfg,user,'yearly',prices,false);
+  assert.equal(result.params.subscription_data.trial_period_days,undefined);
+  assert.match(result.params.custom_text.submit.message,/charged at checkout/);
+  await assert.rejects(createCheckout(mockStripe(),cfg,user,'yearly',prices,false),e=>e.code==='TRIAL_ELIGIBILITY_CHANGED');
+  const historical={...previous,metadata:{app:'nautilusclaw'},items:{data:[{price:{id:'retired_price'}}]}};
+  assert.equal(evaluateSubscriptions([historical],prices).trialEligible,false);
+});
+
+test('an old annual checkout cannot replace the advertised no-upfront-charge offer', async () => {
+  const stripe=mockStripe();
+  const old={id:'cs_old',metadata:{app:'nautilusclaw',plan:'yearly'}};
+  stripe.checkout.sessions.list=async()=>({data:[old]});
+  await assert.rejects(createCheckout(stripe,cfg,user,'yearly',prices,true),e=>e.code==='CHECKOUT_OPEN');
+  old.metadata.offer='annual-7day-v1';
+  assert.equal((await createCheckout(stripe,cfg,user,'yearly',prices,true)).id,'cs_old');
+});
+
+const trialStart=Math.floor(Date.now()/1000)-30;
+const trial={...paid,status:'trialing',metadata:{app:'nautilusclaw',offer:'annual-7day-v1'},trial_start:trialStart,trial_end:trialStart+7*86400,items:{data:[{price:{id:'price_yearly'},current_period_end:trialStart+7*86400}]}};
+test('a verified annual free trial grants access only during its bounded trial window', () => {
+  const s=evaluateSubscriptions([trial],prices);
+  assert.equal(s.active,true);assert.equal(s.trialing,true);assert.equal(s.trialEnd,trial.trial_end);assert.equal(s.trialEligible,false);
+  assert.equal(evaluateSubscriptions([trial],prices,trial.trial_end*1000).active,false);
+  for(const change of [{metadata:{}},{trial_end:trialStart+8*86400},{trial_start:trial.trial_end},{status:'paused'},{status:'canceled'},{cancel_at:trialStart},{items:paid.items}])
+    assert.equal(evaluateSubscriptions([{...trial,...change}],prices).active,false,JSON.stringify(change));
+});
+
+test('zero-payment checkout events recheck the current trial instead of trusting the return or event', async () => {
+  const writes=[];const stripe=mockStripe([trial]);stripe.customers.update=async(id,body)=>writes.push(body);
+  const event={id:'evt_trial',livemode:false,type:'checkout.session.completed',data:{object:{customer:customer.id,payment_status:'no_payment_required'}}};
+  assert.equal((await reconcileEvent(stripe,cfg,event,prices)).reconciled,true);
+  assert.equal(writes[0].metadata.family_status,'trialing');
+  stripe.subscriptions.list=()=>[{...trial,status:'canceled'}];
+  await reconcileEvent(stripe,cfg,event,prices);
+  assert.equal(writes[1].metadata.family_status,'free');
+});
+
+test('an outstanding balance cannot create a misleading no-charge trial checkout', async () => {
+  const stripe=mockStripe();stripe.customers.list=()=>[{...customer,balance:100}];
+  await assert.rejects(createCheckout(stripe,cfg,user,'yearly',prices,true),/existing billing balance/);
+});
+
+test('displayed trial and returning subscriber terms match server checkout intent', async () => {
+  const {familyOffer}=await import('../plans.js');
+  assert.equal(familyOffer('yearly',true).trial,true);
+  assert.match(familyOffer('yearly',true).terms,/After 7 days, \$59\/year/);
+  assert.match(familyOffer('yearly',true).consent,/cancel before it ends/);
+  assert.equal(familyOffer('yearly',false).trial,false);
+  assert.match(familyOffer('yearly',false).terms,/\$59 charged at checkout/);
+  assert.equal(familyOffer('monthly').trial,false);
+  assert.match(familyOffer('monthly').terms,/No free trial/);
+});

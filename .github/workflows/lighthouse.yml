@@ -13,7 +13,7 @@ jobs:
       fail-fast: false
       matrix:
         device: [mobile, desktop]
-        page: [home, adventure, login]
+        page: [home, adventure, login, pricing]
     steps:
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
         with:

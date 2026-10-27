@@ -26,7 +26,8 @@ export default async function handler(req, res) {
     const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
     if (body?.action === 'checkout') {
       if (body.adultConfirmed !== true) throw new BillingError(400, 'A parent or guardian must confirm the subscription.');
-      const session = await createCheckout(stripe, cfg, user, body.plan, prices);
+      if (typeof body.trialRequested !== 'boolean') throw new BillingError(400, 'Review the current trial and payment terms first.');
+      const session = await createCheckout(stripe, cfg, user, body.plan, prices, body.trialRequested);
       return res.status(200).json({url: session.url});
     }
     if (body?.action === 'portal') {
@@ -46,3 +47,4 @@ export default async function handler(req, res) {
     });
   }
 }
+
