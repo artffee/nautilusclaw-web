@@ -35,3 +35,7 @@ Production billing remains disabled. The annual CTA therefore says “7-Day Free
 - `BILLING_SETUP.md`
 - `.github/workflows/lighthouse.yml`
 - `docs/family-trial-verification.md`
+
+## Published deployment
+
+Production deployment `dpl_5U62MGJXDfekzVBWhbV7D4AwmJ6S` is READY from source commit `3b5fbced8cca0f1fe86c7809b1482eeb53624761`. Verified the annual offer and privacy line at https://nautilusclaw.com/pricing . The original chat handler is retained at uploaded-file SHA `c3a0201c3460299c01bab11feb5c563779c3a8a6`.
