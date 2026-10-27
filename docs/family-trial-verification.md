@@ -14,7 +14,7 @@ The home, pricing, and billing CTAs have adjacent privacy text: “No ads. No da
 - Pricing and billing previews at 390px and 1440px iframe widths: annual and monthly toggles update price, renewal terms, CTA URL, and trial visibility correctly; no horizontal content overflow (content widths 375px and 1425px after scrollbars).
 - Billing preview: switching intervals clears the parent consent checkbox; checkout stays disabled while billing is unavailable.
 - Console inspection of both previews: no application errors; unrelated browser-extension metadata errors excluded.
-- Hosted Lighthouse workflow includes pricing on mobile and desktop alongside existing pages. Deployment and results are recorded below after verification.
+- Hosted Lighthouse workflow includes pricing on mobile and desktop alongside existing pages. Deployment and measured results are recorded below.
 
 ## Activation limits
 
@@ -39,3 +39,24 @@ Production billing remains disabled. The annual CTA therefore says “7-Day Free
 ## Published deployment
 
 Production deployment `dpl_5U62MGJXDfekzVBWhbV7D4AwmJ6S` is READY from source commit `3b5fbced8cca0f1fe86c7809b1482eeb53624761`. Verified the annual offer and privacy line at https://nautilusclaw.com/pricing . The original chat handler is retained at uploaded-file SHA `c3a0201c3460299c01bab11feb5c563779c3a8a6`.
+
+Production API checks: `/api/billing?action=config` returns 200 with `{"ready":false,"mode":"disabled"}`; GET `/api/chat` returns the existing 405 response. Deployment source confirms the original chat SHA and compiled billing/chat/webhook functions plus middleware. The live pricing and billing pages show the correct annual/monthly terms and disabled checkout, with no application console errors.
+
+## Lighthouse results
+
+[Live audit run](https://github.com/artffee/nautilusclaw-web/actions/runs/40435062532), Lighthouse 13.5.0, 2026-10-27. Values below are the latest measured values for each page/device; individual reruns do not rerun every matrix job.
+
+| Page | Device | Performance | Accessibility | Best practices | SEO |
+| --- | --- | ---: | ---: | ---: | ---: |
+| Home | Mobile | 99 | 100 | 100 | 100 |
+| Home | Desktop | 100 | 100 | 100 | 100 |
+| Pricing | Mobile | 98 | 100 | 100 | 100 |
+| Pricing | Desktop | 100 | 100 | 100 | 100 |
+| Adventure | Mobile | 100 | 100 | 100 | 100 |
+| Adventure | Desktop | 100 | 100 | 100 | 100 |
+| Login | Mobile | 100 | 100 | 100 | 63 |
+| Login | Desktop | 100 | 100 | 100 | 63 |
+
+The initial mobile pricing performance result was 80 with 760ms total blocking time. One targeted repeat on unchanged production source measured 98 with 140ms total blocking time. Desktop login performance was 98 initially and 100 on a targeted repeat. All other table entries come from the first run. These are measurements, not a guarantee of consistent 100 performance. Login SEO is intentionally limited by `noindex,nofollow`; authentication pages remain excluded from search.
+
+The complete signed-in Stripe trial lifecycle could not be exercised while parent authentication and billing are disabled. The automated trial tests use mocked Stripe objects and do not replace that activation test.
