@@ -2,6 +2,16 @@
 
 Live: https://nautilusclaw.com/
 
+## Parent authentication repair — October 28, 2026
+
+The original Supabase project is restored and its database access hardened.
+Real API signup/sign-in/sign-out and isolation between two disposable parents
+were tested. Public account forms remain disabled because email confirmation and
+the server password policy failed launch checks; emailed verification/recovery
+still needs dashboard and test-mailbox access. See the
+[restoration report](docs/auth-restoration-2026-10-28.md). No website deployment or
+paid billing activation was performed.
+
 ## October 26, 2026 update
 
 - A responsive cream, coral and ocean-green homepage with explicit pricing and availability.

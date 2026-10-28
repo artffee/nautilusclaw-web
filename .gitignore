@@ -9,3 +9,4 @@ stripe-setup-secrets.json
 
 
 /vendor/
+/supabase/.temp/

@@ -1,5 +1,14 @@
 # Supabase setup (Phase 1, problem #2)
 
+## Existing project: recovered October 28, 2026
+
+Reuse `zijjkbtxqjhnretrxawk`; it is restored and `ACTIVE_HEALTHY`. Do not create a
+replacement. Migration `20261028165233_harden_parent_auth_isolation` is already
+applied. Keep account forms disabled until email confirmation, provider password
+policy, SMTP and full emailed recovery pass. See the
+[current verification and remaining access](../docs/auth-restoration-2026-10-28.md).
+The creation instructions below are historical fresh-install guidance.
+
 This replaces the localStorage "auth" with real sign-in, a Postgres database, and
 row-level security so a parent can only ever see their own family's data — syncing
 across the kid's tablet and the parent's phone.
