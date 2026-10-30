@@ -1,5 +1,14 @@
 # Supabase setup (Phase 1, problem #2)
 
+## Existing project: recovered October 28, 2026
+
+Reuse `zijjkbtxqjhnretrxawk`; it is restored and `ACTIVE_HEALTHY`. Do not create a
+replacement. Migration `20261028165233_harden_parent_auth_isolation` is already
+applied. Keep account forms disabled until email confirmation, provider password
+policy, SMTP and full emailed recovery pass. See the
+[current verification and remaining access](../docs/auth-restoration-2026-10-28.md).
+The creation instructions below are historical fresh-install guidance.
+
 This replaces the localStorage "auth" with real sign-in, a Postgres database, and
 row-level security so a parent can only ever see their own family's data — syncing
 across the kid's tablet and the parent's phone.
@@ -88,6 +97,9 @@ not reused and is removed on sign-out. No password is saved by this application.
 Recovery links can establish a session in a new tab; after a successful password
 change, this app signs that tab out and asks for a fresh sign-in.
 
-Current blocker: the configured project hostname returned ENOTFOUND from a hosted
-runner. Restore or connect the intended project, verify the settings and isolation
-above, then set `accountsEnabled: true` in `supabase-config.js` and redeploy.
+Current blocker (rechecked October 30): the original project is restored and its
+API responds, but email auto-confirmation is still enabled. Authorized dashboard
+access, server password-policy verification, SMTP inspection, and two controlled
+test inboxes are needed to finish the real email journeys. Do not repeat the
+database restoration. Follow the [current activation audit](../docs/auth-activation-audit-2026-10-30.md)
+before setting `accountsEnabled: true` or deploying.

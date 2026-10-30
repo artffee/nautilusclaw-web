@@ -2,6 +2,13 @@
 
 Implemented October 26, 2026 for NautilusClaw Kids.
 
+**October 28 status:** The original Supabase project has been restored and its
+database permissions hardened. Live API sign-in, sign-out and two-account RLS
+tests pass, but email confirmation is disabled and the server accepts an
+eight-character password. Forms remain disabled; complete email signup/recovery
+is not verified. See [current restoration evidence](auth-restoration-2026-10-28.md).
+The sections below retain the original implementation/release record.
+
 ## Delivered
 
 - Dedicated dark `/login` with responsive layout, sign-in, account creation,

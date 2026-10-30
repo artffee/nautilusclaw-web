@@ -1,0 +1,363 @@
+{
+  "time": "2026-10-28T16:52:45.268Z",
+  "project": "zijjkbtxqjhnretrxawk",
+  "scope": "Real provider API diagnostics with disposable auto-confirmed accounts; no mailbox verification.",
+  "checks": [
+    {
+      "name": "email_confirmation_required",
+      "pass": false
+    },
+    {
+      "name": "account_1_signup_provider_api",
+      "pass": true,
+      "status": 200,
+      "autoconfirmed": true
+    },
+    {
+      "name": "account_1_parent_trigger",
+      "pass": true
+    },
+    {
+      "name": "account_1_password_signin",
+      "pass": true
+    },
+    {
+      "name": "account_1_own_state_write",
+      "pass": true
+    },
+    {
+      "name": "account_1_own_child_insert",
+      "pass": true,
+      "status": 201
+    },
+    {
+      "name": "account_1_own_message_insert",
+      "pass": true,
+      "status": 201
+    },
+    {
+      "name": "account_1_own_concern_insert",
+      "pass": true,
+      "status": 201
+    },
+    {
+      "name": "account_1_own_summary_insert",
+      "pass": true,
+      "status": 201
+    },
+    {
+      "name": "account_2_signup_provider_api",
+      "pass": true,
+      "status": 200,
+      "autoconfirmed": true
+    },
+    {
+      "name": "account_2_parent_trigger",
+      "pass": true
+    },
+    {
+      "name": "account_2_password_signin",
+      "pass": true
+    },
+    {
+      "name": "account_2_own_state_write",
+      "pass": true
+    },
+    {
+      "name": "account_2_own_child_insert",
+      "pass": true,
+      "status": 201
+    },
+    {
+      "name": "account_2_own_message_insert",
+      "pass": true,
+      "status": 201
+    },
+    {
+      "name": "account_2_own_concern_insert",
+      "pass": true,
+      "status": 201
+    },
+    {
+      "name": "account_2_own_summary_insert",
+      "pass": true,
+      "status": 201
+    },
+    {
+      "name": "account_1_cannot_get_other_parent",
+      "pass": true,
+      "status": 200
+    },
+    {
+      "name": "account_1_cannot_patch_other_parent",
+      "pass": true,
+      "status": 200
+    },
+    {
+      "name": "account_1_cannot_delete_other_parent",
+      "pass": true,
+      "status": 200
+    },
+    {
+      "name": "account_1_cannot_get_other_child",
+      "pass": true,
+      "status": 200
+    },
+    {
+      "name": "account_1_cannot_patch_other_child",
+      "pass": true,
+      "status": 200
+    },
+    {
+      "name": "account_1_cannot_delete_other_child",
+      "pass": true,
+      "status": 200
+    },
+    {
+      "name": "account_1_cannot_get_other_message",
+      "pass": true,
+      "status": 200
+    },
+    {
+      "name": "account_1_cannot_patch_other_message",
+      "pass": true,
+      "status": 200
+    },
+    {
+      "name": "account_1_cannot_delete_other_message",
+      "pass": true,
+      "status": 200
+    },
+    {
+      "name": "account_1_cannot_get_other_concern",
+      "pass": true,
+      "status": 200
+    },
+    {
+      "name": "account_1_cannot_patch_other_concern",
+      "pass": true,
+      "status": 200
+    },
+    {
+      "name": "account_1_cannot_delete_other_concern",
+      "pass": true,
+      "status": 200
+    },
+    {
+      "name": "account_1_cannot_get_other_summary",
+      "pass": true,
+      "status": 200
+    },
+    {
+      "name": "account_1_cannot_patch_other_summary",
+      "pass": true,
+      "status": 200
+    },
+    {
+      "name": "account_1_cannot_delete_other_summary",
+      "pass": true,
+      "status": 200
+    },
+    {
+      "name": "account_1_cannot_insert_other_parent",
+      "pass": true,
+      "status": 403
+    },
+    {
+      "name": "account_1_cannot_insert_other_child",
+      "pass": true,
+      "status": 403
+    },
+    {
+      "name": "account_1_cannot_insert_other_message",
+      "pass": true,
+      "status": 403
+    },
+    {
+      "name": "account_1_cannot_insert_other_concern",
+      "pass": true,
+      "status": 403
+    },
+    {
+      "name": "account_1_cannot_insert_other_summary",
+      "pass": true,
+      "status": 403
+    },
+    {
+      "name": "account_1_cannot_transfer_child",
+      "pass": true
+    },
+    {
+      "name": "account_1_cannot_reference_other_message",
+      "pass": true
+    },
+    {
+      "name": "account_2_cannot_get_other_parent",
+      "pass": true,
+      "status": 200
+    },
+    {
+      "name": "account_2_cannot_patch_other_parent",
+      "pass": true,
+      "status": 200
+    },
+    {
+      "name": "account_2_cannot_delete_other_parent",
+      "pass": true,
+      "status": 200
+    },
+    {
+      "name": "account_2_cannot_get_other_child",
+      "pass": true,
+      "status": 200
+    },
+    {
+      "name": "account_2_cannot_patch_other_child",
+      "pass": true,
+      "status": 200
+    },
+    {
+      "name": "account_2_cannot_delete_other_child",
+      "pass": true,
+      "status": 200
+    },
+    {
+      "name": "account_2_cannot_get_other_message",
+      "pass": true,
+      "status": 200
+    },
+    {
+      "name": "account_2_cannot_patch_other_message",
+      "pass": true,
+      "status": 200
+    },
+    {
+      "name": "account_2_cannot_delete_other_message",
+      "pass": true,
+      "status": 200
+    },
+    {
+      "name": "account_2_cannot_get_other_concern",
+      "pass": true,
+      "status": 200
+    },
+    {
+      "name": "account_2_cannot_patch_other_concern",
+      "pass": true,
+      "status": 200
+    },
+    {
+      "name": "account_2_cannot_delete_other_concern",
+      "pass": true,
+      "status": 200
+    },
+    {
+      "name": "account_2_cannot_get_other_summary",
+      "pass": true,
+      "status": 200
+    },
+    {
+      "name": "account_2_cannot_patch_other_summary",
+      "pass": true,
+      "status": 200
+    },
+    {
+      "name": "account_2_cannot_delete_other_summary",
+      "pass": true,
+      "status": 200
+    },
+    {
+      "name": "account_2_cannot_insert_other_parent",
+      "pass": true,
+      "status": 403
+    },
+    {
+      "name": "account_2_cannot_insert_other_child",
+      "pass": true,
+      "status": 403
+    },
+    {
+      "name": "account_2_cannot_insert_other_message",
+      "pass": true,
+      "status": 403
+    },
+    {
+      "name": "account_2_cannot_insert_other_concern",
+      "pass": true,
+      "status": 403
+    },
+    {
+      "name": "account_2_cannot_insert_other_summary",
+      "pass": true,
+      "status": 403
+    },
+    {
+      "name": "account_2_cannot_transfer_child",
+      "pass": true
+    },
+    {
+      "name": "account_2_cannot_reference_other_message",
+      "pass": true
+    },
+    {
+      "name": "anonymous_denied_parent",
+      "pass": true,
+      "status": 401
+    },
+    {
+      "name": "anonymous_denied_child",
+      "pass": true,
+      "status": 401
+    },
+    {
+      "name": "anonymous_denied_message",
+      "pass": true,
+      "status": 401
+    },
+    {
+      "name": "anonymous_denied_concern",
+      "pass": true,
+      "status": 401
+    },
+    {
+      "name": "anonymous_denied_summary",
+      "pass": true,
+      "status": 401
+    },
+    {
+      "name": "provider_rejects_8_character_password",
+      "pass": false,
+      "status": 200
+    },
+    {
+      "name": "test_password_restored_to_strong",
+      "pass": true
+    },
+    {
+      "name": "account_1_global_signout",
+      "pass": true,
+      "status": 204
+    },
+    {
+      "name": "account_1_refresh_revoked",
+      "pass": true,
+      "status": 400
+    },
+    {
+      "name": "account_2_global_signout",
+      "pass": true,
+      "status": 204
+    },
+    {
+      "name": "account_2_refresh_revoked",
+      "pass": true,
+      "status": 400
+    }
+  ],
+  "test_accounts_deleted": 2,
+  "test_users_remaining": 0,
+  "test_sessions_remaining": 0,
+  "existing_auth_users_before_and_after": 3,
+  "existing_parent_rows_before_and_after": 3,
+  "activation": "blocked"
+}
