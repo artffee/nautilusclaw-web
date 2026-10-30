@@ -97,6 +97,9 @@ not reused and is removed on sign-out. No password is saved by this application.
 Recovery links can establish a session in a new tab; after a successful password
 change, this app signs that tab out and asks for a fresh sign-in.
 
-Current blocker: the configured project hostname returned ENOTFOUND from a hosted
-runner. Restore or connect the intended project, verify the settings and isolation
-above, then set `accountsEnabled: true` in `supabase-config.js` and redeploy.
+Current blocker (rechecked October 30): the original project is restored and its
+API responds, but email auto-confirmation is still enabled. Authorized dashboard
+access, server password-policy verification, SMTP inspection, and two controlled
+test inboxes are needed to finish the real email journeys. Do not repeat the
+database restoration. Follow the [current activation audit](../docs/auth-activation-audit-2026-10-30.md)
+before setting `accountsEnabled: true` or deploying.
