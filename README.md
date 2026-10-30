@@ -2,6 +2,15 @@
 
 Live: https://nautilusclaw.com/
 
+## Authentication activation audit — October 30, 2026
+
+Email auto-confirmation is still enabled at the live provider. Dashboard sign-in
+did not complete, so Auth settings and real email delivery remain unverified.
+The existing database protections, disabled production forms, free guest story
+flow and disabled billing were rechecked; 52 application tests pass. See the
+[current audit and exact continuation requirements](docs/auth-activation-audit-2026-10-30.md).
+No provider or website changes were published.
+
 ## Parent authentication repair — October 28, 2026
 
 The original Supabase project is restored and its database access hardened.
