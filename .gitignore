@@ -1,3 +1,11 @@
-.vercel
+node_modules/
+.env
+.env.*
+!.env.example
+.openai/
+dist/
+.vercel/
+stripe-setup-secrets.json
 
-.vercel
+
+/vendor/

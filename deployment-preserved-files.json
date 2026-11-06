@@ -1,0 +1,9 @@
+{
+  "projectId": "prj_kCILWbwrcZSp1odUzKxuBoGinE2O",
+  "teamId": "team_h9a6UAtdfEyOIHcS9zYtSfOm",
+  "sourceDeploymentId": "dpl_CEP2faNZrcYrdpJrK6z1mDrJE3VF",
+  "files": [
+    {"file": "api/chat.js", "sha": "c3a0201c3460299c01bab11feb5c563779c3a8a6"}
+  ],
+  "note": "Retain this deployed server function byte-for-byte when releasing this frontend. The available source-read tool truncated this file. Do not replace it with a stub or omit it. Vercel create_deployment accepts this previously uploaded file reference."
+}
