@@ -65,5 +65,10 @@
     }
   ],
   "buildCommand": "npm run build",
-  "outputDirectory": "dist"
+  "outputDirectory": "dist",
+  "git": {
+    "deploymentEnabled": {
+      "review/visitor-counts-2026-11-14": false
+    }
+  }
 }

@@ -1,5 +1,5 @@
 import {mkdir, copyFile, rm, readFile, writeFile} from 'node:fs/promises';
-const publicFiles = ['index.html','home.js','pricing.html','billing.html','billing.js','plans.js','ocean.css','favicon.svg',
+const publicFiles = ['for-grown-ups.html','visitor-counts.js','visitor-counts.css','index.html','home.js','pricing.html','billing.html','billing.js','plans.js','ocean.css','favicon.svg',
   'stories.html','stories.js','stories.css','story-data.mjs','learn.html','learning.js','learning.css','learning-core.mjs','adventure.html','adventure.js','reef-recap.mjs','recap.html','recap.js','robots.txt','sitemap.xml','parent.html','parent-preview.html','parent-view.js','guide.html',
   'login.html','login.css','login.js','login-core.mjs','app.html','auth.js','db.js','supabase-config.js'];
 await rm('dist', {recursive:true,force:true});
